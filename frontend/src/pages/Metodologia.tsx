@@ -2,7 +2,7 @@
 export function Metodologia() {
   return (
     <section className="card">
-      <h2>PASSOS DA CONTAGEM EM CÂMARA</h2>
+      <h2>Passos da contagem em câmara</h2>
       <ol className="lista">
         <li>Homogeneizar o LCR suavemente por inversão.</li>
         <li>Preencher a câmara de Neubauer por capilaridade, evitando bolhas.</li>
@@ -24,7 +24,7 @@ export function Metodologia() {
       </ol>
 
       <div className="caixa-formula">
-        <strong>FÓRMULA APLICADA</strong>
+        <strong>Fórmula aplicada</strong>
         <p>células/µL = total contado ÷ (nº quadrantes × 0,1) × diluição</p>
         <p className="hint">
           Cada quadrante grande da Neubauer possui volume de 0,1 µL. Forma

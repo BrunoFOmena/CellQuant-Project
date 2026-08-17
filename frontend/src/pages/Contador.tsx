@@ -48,13 +48,13 @@ export function Contador() {
   return (
     <section>
       <div className="alerta-vermelho">
-        ATENÇÃO: verifique se a amostra está homogênea na câmara
+        Atenção: verifique se a amostra está homogênea na câmara
       </div>
 
       <div className="contador-grid">
         {/* Bloco leucócitos */}
         <div className="card">
-          <h3>LEUCÓCITOS</h3>
+          <h3>Leucócitos</h3>
           <div className="campos-duplos">
             <label>
               Quadrantes contados
@@ -104,7 +104,7 @@ export function Contador() {
 
         {/* Bloco hemácias */}
         <div className="card">
-          <h3>HEMÁCIAS</h3>
+          <h3>Hemácias</h3>
           <div className="campos-duplos">
             <label>
               Quadrantes contados
@@ -159,7 +159,7 @@ export function Contador() {
 
       {/* Diferencial */}
       <div className="card">
-        <h3>DIFERENCIAL</h3>
+        <h3>Diferencial</h3>
         <div className="diff-grid">
           <div className="diff-card">
             <span>Polimorfonucleares</span>
@@ -194,7 +194,7 @@ export function Contador() {
       </div>
 
       <div className="card">
-        <h3>OBSERVAÇÕES</h3>
+        <h3>Observações</h3>
         <textarea
           rows={3}
           value={registro.observacoes}

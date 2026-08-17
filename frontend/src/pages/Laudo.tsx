@@ -104,7 +104,7 @@ export function Laudo() {
 
       <div className="laudo-grid">
         <div className="card">
-          <h3>IDENTIFICAÇÃO</h3>
+          <h3>Identificação</h3>
           <p>
             <span>Operador</span>
             <strong>{registro.operador || "—"}</strong>
@@ -126,7 +126,7 @@ export function Laudo() {
         </div>
 
         <div className="card">
-          <h3>CELULARIDADE</h3>
+          <h3>Celularidade</h3>
           <p>
             <span>Leucócitos</span>
             <strong>{formatarNumero(resultados.leucoUl, 0)} céls/µL</strong>
@@ -146,7 +146,7 @@ export function Laudo() {
         </div>
 
         <div className="card">
-          <h3>DIFERENCIAL</h3>
+          <h3>Diferencial</h3>
           <p>
             <span>Polimorfonucleares</span>
             <strong>
@@ -166,7 +166,7 @@ export function Laudo() {
         </div>
 
         <div className="card">
-          <h3>OBSERVAÇÕES</h3>
+          <h3>Observações</h3>
           <p>{registro.observacoes.trim() || "Sem observações."}</p>
         </div>
       </div>

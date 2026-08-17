@@ -66,7 +66,6 @@ export function Consulta() {
   return (
     <section>
       <div className="consulta-topo">
-        <h2>Consulta de exames</h2>
         <button
           type="button"
           className="btn btn-verde"
@@ -79,7 +78,7 @@ export function Consulta() {
 
       {/* Filtros */}
       <div className="card">
-        <h3>FILTROS</h3>
+        <h3>Filtros</h3>
         <div className="filtros-grid">
           <label className="span-2">
             Buscar (prontuário, operador, paciente, data ou observações)
@@ -140,7 +139,7 @@ export function Consulta() {
 
       {/* Tabela */}
       <div className="card">
-        <h3>EXAMES SALVOS</h3>
+        <h3>Exames salvos</h3>
         {exames.length === 0 ? (
           <p>
             {erro
@@ -149,7 +148,7 @@ export function Consulta() {
           </p>
         ) : (
           <div className="table-wrap">
-            <table>
+            <table className="tabela-cartoes">
               <thead>
                 <tr>
                   <th>data</th>
@@ -170,15 +169,27 @@ export function Consulta() {
                     className={selecionado?.id === e.id ? "selecionada" : ""}
                     onClick={() => setSelecionado(e)}
                   >
-                    <td>{e.data_exame.split("-").reverse().join("/")}</td>
-                    <td>{e.operador}</td>
-                    <td>{e.prontuario}</td>
-                    <td>{e.paciente || "—"}</td>
-                    <td>{formatarNumero(Number(e.leucocitos_ul), 0)}</td>
-                    <td>{formatarNumero(Number(e.hemacias_ul), 0)}</td>
-                    <td>{formatarNumero(Number(e.poli_pct), 0)}%</td>
-                    <td>{formatarNumero(Number(e.mono_pct), 0)}%</td>
-                    <td className="obs-cell">{e.observacoes || "—"}</td>
+                    <td data-label="Data">
+                      {e.data_exame.split("-").reverse().join("/")}
+                    </td>
+                    <td data-label="Operador">{e.operador}</td>
+                    <td data-label="Prontuário">{e.prontuario}</td>
+                    <td data-label="Paciente">{e.paciente || "—"}</td>
+                    <td data-label="Leucócitos/µL">
+                      {formatarNumero(Number(e.leucocitos_ul), 0)}
+                    </td>
+                    <td data-label="Hemácias/µL">
+                      {formatarNumero(Number(e.hemacias_ul), 0)}
+                    </td>
+                    <td data-label="Poli %">
+                      {formatarNumero(Number(e.poli_pct), 0)}%
+                    </td>
+                    <td data-label="Mono %">
+                      {formatarNumero(Number(e.mono_pct), 0)}%
+                    </td>
+                    <td className="obs-cell" data-label="Observações">
+                      {e.observacoes || "—"}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -217,7 +228,7 @@ export function Consulta() {
       {/* Detalhe do exame selecionado */}
       {selecionado && (
         <div className="card detalhe">
-          <h3>DETALHE DO EXAME</h3>
+          <h3>Detalhe do exame</h3>
           <p>
             <strong>{selecionado.prontuario}</strong> — {selecionado.operador} —{" "}
             {selecionado.data_exame.split("-").reverse().join("/")}
