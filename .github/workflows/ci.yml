@@ -73,9 +73,25 @@ jobs:
       - run: npm test
       - run: npm run build
 
-  e2e:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  # Job único para exigir na proteção da main. Falha se backend ou frontend falhou.
+  ci:
+    name: CI
+    if: always()
     needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Exigir testes verdes
+        run: |
+          echo "backend=${{ needs.backend.result }}"
+          echo "frontend=${{ needs.frontend.result }}"
+          if [ "${{ needs.backend.result }}" != "success" ] || [ "${{ needs.frontend.result }}" != "success" ]; then
+            echo "CI recusou o merge/publish: backend ou frontend falhou."
+            exit 1
+          fi
+
+  e2e:
+    if: ${{ always() && needs.ci.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    needs: [ci]
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -132,8 +148,9 @@ jobs:
           npx playwright test
 
   publish:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [e2e]
+    # always() + checagem explícita: job skipped no needs NÃO publica.
+    if: ${{ always() && needs.ci.result == 'success' && needs.e2e.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    needs: [ci, e2e]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
