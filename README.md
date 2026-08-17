@@ -39,6 +39,8 @@ git checkout -b hotfix/corrige-calculo
 
 Abra um Pull Request da sua branch para `develop` (`feature`/`fix`) ou para `main` (`hotfix`).
 
+A `main` não recebe push direto: o GitHub exige PR com os checks **backend** e **frontend** verdes. Imagens GHCR só publicam se pytest, Vitest, build **e** E2E passarem.
+
 ---
 
 ## Desenvolvimento local
