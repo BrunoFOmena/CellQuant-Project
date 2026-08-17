@@ -80,7 +80,7 @@ describe("Laudo", () => {
     vi.stubGlobal("confirm", confirm);
     vi.stubGlobal(
       "fetch",
-      vi.fn((url: string | URL, init?: RequestInit) => {
+      vi.fn((_url: string | URL, init?: RequestInit) => {
         if (init?.method === "POST") {
           return Promise.resolve({ ok: true, json: () => Promise.resolve({ id: 2 }) });
         }

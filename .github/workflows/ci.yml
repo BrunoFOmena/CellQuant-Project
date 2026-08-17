@@ -74,7 +74,7 @@ jobs:
       - run: npm run build
 
   e2e:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: ${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     needs: [backend, frontend]
     runs-on: ubuntu-latest
     services:
@@ -132,8 +132,8 @@ jobs:
           npx playwright test
 
   publish:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [e2e]
+    if: ${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    needs: [backend, frontend, e2e]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
