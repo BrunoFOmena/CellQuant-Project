@@ -2,7 +2,7 @@
 export function Significado() {
   return (
     <section className="card">
-      <h2>ACHADO × INTERPRETAÇÃO USUAL</h2>
+      <h2>Achado × interpretação usual</h2>
       <div className="table-wrap">
         <table>
           <thead>
