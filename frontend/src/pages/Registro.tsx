@@ -6,7 +6,7 @@ export function Registro() {
 
   return (
     <section className="card">
-      <h2>IDENTIFICAÇÃO DO EXAME</h2>
+      <h2>Identificação do exame</h2>
 
       <div className="form-grid">
         <label>
