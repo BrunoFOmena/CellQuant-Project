@@ -16,6 +16,31 @@ Repositório: https://github.com/BrunoFOmena/Contador_LCR
 
 ---
 
+## Branches
+
+| Branch | Uso |
+|---|---|
+| `main` | Produção. Só recebe merge de `hotfix` ou de `develop` estável. CI + E2E + imagens GHCR. |
+| `develop` | Integração. Novas `feature` e `fix` entram aqui. |
+| `feature` | Base para funcionalidades. Trabalhe em `feature/<nome>` a partir dela. |
+| `fix` | Base para correções não urgentes. Trabalhe em `fix/<nome>`. |
+| `hotfix` | Correção urgente em produção. Crie `hotfix/<nome>` a partir de `main` e depois mescle em `main` **e** em `develop`. |
+
+```powershell
+git checkout feature
+git checkout -b feature/minha-ideia
+
+git checkout fix
+git checkout -b fix/corrige-data
+
+git checkout main
+git checkout -b hotfix/corrige-calculo
+```
+
+Abra um Pull Request da sua branch para `develop` (`feature`/`fix`) ou para `main` (`hotfix`).
+
+---
+
 ## Desenvolvimento local
 
 ### 1) Banco (`bd`)
@@ -77,7 +102,7 @@ npx playwright install chromium
 npx playwright test
 ```
 
-No GitHub Actions o CI roda pytest (Postgres 5433), Vitest e, em push na `main`, Playwright e publicação das imagens.
+No GitHub Actions o CI roda pytest e Vitest em `main`, `develop`, `feature`, `fix` e `hotfix`. Playwright e publicação de imagens só em push na `main`.
 
 ---
 
