@@ -90,7 +90,7 @@ jobs:
           fi
 
   e2e:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: ${{ always() && needs.ci.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     needs: [ci]
     runs-on: ubuntu-latest
     services:
