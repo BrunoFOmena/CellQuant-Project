@@ -1,0 +1,361 @@
+/* Estilos do Contador LCR — visual clínico simples */
+:root {
+  --azul: #0b4f8a;
+  --azul-claro: #1e6bb8;
+  --amarelo: #fff3b0;
+  --amarelo-btn: #f0c400;
+  --vermelho: #b42318;
+  --vermelho-bg: #fde8e6;
+  --verde: #1f8a4c;
+  --cinza: #eef1f4;
+  --borda: #c5ced6;
+  --texto: #1c2430;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f6f8;
+  color: var(--texto);
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.topo {
+  background: var(--azul);
+  color: #fff;
+  padding: 0.85rem 1.1rem;
+}
+
+.topo strong {
+  font-size: 1.15rem;
+  margin-right: 0.75rem;
+}
+
+.subtitulo-topo {
+  font-size: 0.88rem;
+  opacity: 0.95;
+}
+
+.abas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+  background: #fff;
+  border-bottom: 1px solid var(--borda);
+  padding: 0 0.5rem;
+}
+
+.aba {
+  border: none;
+  background: transparent;
+  padding: 0.75rem 0.85rem;
+  font-weight: 700;
+  color: #445;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+}
+
+.aba.ativa {
+  color: var(--azul);
+  border-bottom-color: var(--azul);
+}
+
+.faixa-passos {
+  background: #fff8d6;
+  border-bottom: 1px solid #e6d27a;
+  padding: 0.55rem 1rem;
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.conteudo {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--borda);
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.card h2,
+.card h3 {
+  margin: 0 0 0.75rem;
+  color: var(--azul);
+  font-size: 1rem;
+}
+
+.form-grid,
+.contador-grid,
+.diff-grid,
+.laudo-grid,
+.filtros-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.form-grid,
+.contador-grid,
+.diff-grid {
+  grid-template-columns: 1fr 1fr;
+}
+
+.laudo-grid {
+  grid-template-columns: 1fr 1fr;
+}
+
+.filtros-grid {
+  grid-template-columns: 1fr 1fr 1fr auto;
+  align-items: end;
+}
+
+.span-2 {
+  grid-column: span 2;
+}
+
+@media (max-width: 900px) {
+  .form-grid,
+  .contador-grid,
+  .diff-grid,
+  .laudo-grid,
+  .filtros-grid {
+    grid-template-columns: 1fr;
+  }
+  .span-2 {
+    grid-column: auto;
+  }
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+input,
+textarea {
+  font: inherit;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--borda);
+  border-radius: 3px;
+  background: #fffef8;
+}
+
+.campos-duplos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
+}
+
+.total-box,
+.diff-card {
+  background: var(--amarelo);
+  border: 1px solid #d7c56a;
+  padding: 0.65rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.total-box strong,
+.diff-card strong {
+  display: block;
+  font-size: 1.8rem;
+  margin-top: 0.2rem;
+}
+
+.resultado-box {
+  background: #445;
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  padding: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.alerta-vermelho {
+  background: var(--vermelho-bg);
+  border: 1px solid var(--vermelho);
+  color: var(--vermelho);
+  padding: 0.65rem 0.8rem;
+  margin: 0.65rem 0;
+  font-weight: 700;
+}
+
+.alerta-amarelo {
+  background: #fff4cc;
+  border: 1px solid #d4b106;
+  padding: 0.65rem 0.8rem;
+  margin: 0.65rem 0;
+}
+
+.alerta-ok {
+  background: #e6f7ed;
+  border: 1px solid var(--verde);
+  color: #145c32;
+  padding: 0.65rem 0.8rem;
+  margin: 0.65rem 0;
+  font-weight: 700;
+}
+
+.btn {
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 0.55rem 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-largo {
+  width: 100%;
+}
+
+.btn-azul {
+  background: var(--azul-claro);
+  color: #fff;
+}
+
+.btn-amarelo {
+  background: var(--amarelo-btn);
+  border-color: #c9a100;
+  color: #111;
+}
+
+.btn-verde {
+  background: var(--verde);
+  color: #fff;
+}
+
+.btn-vermelho {
+  background: #d6453d;
+  color: #fff;
+}
+
+.btn-cinza {
+  background: #fff;
+  border-color: var(--borda);
+  color: #333;
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+  align-items: center;
+}
+
+.legenda,
+.hint {
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.caixa-formula {
+  background: var(--cinza);
+  border: 1px solid var(--borda);
+  padding: 0.75rem;
+  margin: 0.75rem 0;
+  font-family: Consolas, monospace;
+}
+
+.lista {
+  line-height: 1.55;
+}
+
+.card p span {
+  display: block;
+  font-size: 0.78rem;
+  color: #666;
+  font-weight: 700;
+}
+
+.card p strong {
+  font-size: 1.05rem;
+}
+
+.consulta-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.consulta-topo h2 {
+  margin: 0;
+  color: var(--azul);
+}
+
+.filtros-acoes {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+th,
+td {
+  border: 1px solid var(--borda);
+  padding: 0.45rem 0.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #e8eef5;
+}
+
+tr {
+  cursor: pointer;
+}
+
+tr.selecionada {
+  background: #e7f1fb;
+}
+
+.obs-cell {
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.paginacao {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.detalhe {
+  border-left: 4px solid var(--azul);
+}

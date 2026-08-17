@@ -1,0 +1,19 @@
+{
+  "celulas": [
+    { "id": "leuco_1_quad_4", "total": 1, "diluicao": 1, "quadrantes": 4, "esperado": 2.5 },
+    { "id": "hema_1_quad_1", "total": 1, "diluicao": 1, "quadrantes": 1, "esperado": 10 },
+    { "id": "leuco_dil_2", "total": 40, "diluicao": 2, "quadrantes": 4, "esperado": 200 },
+    { "id": "leuco_59", "total": 59, "diluicao": 1, "quadrantes": 4, "esperado": 147.5 },
+    { "id": "total_zero", "total": 0, "diluicao": 1, "quadrantes": 4, "esperado": 0 },
+    { "id": "diluicao_zero", "total": 10, "diluicao": 0, "quadrantes": 4, "esperado": 0 },
+    { "id": "quadrantes_zero", "total": 10, "diluicao": 1, "quadrantes": 0, "esperado": 0 },
+    { "id": "diluicao_negativa", "total": 10, "diluicao": -1, "quadrantes": 4, "esperado": 0 },
+    { "id": "quadrantes_negativos", "total": 10, "diluicao": 1, "quadrantes": -1, "esperado": 0 },
+    { "id": "contagem_grande", "total": 10000, "diluicao": 1, "quadrantes": 4, "esperado": 25000 }
+  ],
+  "percentual": [
+    { "id": "zero_sobre_zero", "parte": 0, "total": 0, "esperado": 0 },
+    { "id": "cem_porcento", "parte": 1, "total": 1, "esperado": 100 },
+    { "id": "um_terco", "parte": 1, "total": 3, "esperado": 33.333333333333336 }
+  ]
+}
