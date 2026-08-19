@@ -9,6 +9,11 @@ backend/.pytest_cache/
 htmlcov/
 .env
 
+# SQLite local (exames reais do laboratório)
+data/*.db
+data/*.db-wal
+data/*.db-shm
+
 # Node
 frontend/node_modules/
 frontend/dist/
@@ -17,9 +22,6 @@ e2e/test-results/
 e2e/playwright-report/
 test-results/
 playwright-report/
-
-# Instalador local do Postgres (arquivo grande)
-bd/postgresql-*-setup.exe
 
 # OS / IDE
 .DS_Store

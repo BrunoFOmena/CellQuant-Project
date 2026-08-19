@@ -3,9 +3,6 @@ from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 
 
-pytestmark = pytest.mark.postgres
-
-
 def test_defaults_e_indices(db_session):
     row = db_session.execute(
         text(
@@ -22,9 +19,9 @@ def test_defaults_e_indices(db_session):
     assert row.paciente is None
 
     indices = {
-        r.indexname
+        r[0]
         for r in db_session.execute(
-            text("SELECT indexname FROM pg_indexes WHERE tablename = 'exames'")
+            text("SELECT name FROM sqlite_master WHERE type = 'index'")
         )
     }
     assert "idx_exames_prontuario" in indices

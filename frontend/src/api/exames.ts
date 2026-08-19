@@ -1,7 +1,5 @@
-// Chamadas HTTP para a API FastAPI
+// Chamadas HTTP para a API FastAPI (mesma origem; o Vite faz proxy no dev)
 import type { Exame, ExameCreate } from "../types/exame";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export type FiltrosExame = {
   q?: string;
@@ -17,14 +15,14 @@ export async function listarExames(filtros: FiltrosExame = {}): Promise<Exame[]>
   if (filtros.data_final) params.set("data_final", filtros.data_final);
 
   const qs = params.toString();
-  const res = await fetch(`${API_URL}/exames${qs ? `?${qs}` : ""}`);
+  const res = await fetch(`/exames${qs ? `?${qs}` : ""}`);
   if (!res.ok) throw new Error("Falha ao listar exames");
   return res.json();
 }
 
 // Salva exame do Laudo
 export async function criarExame(payload: ExameCreate): Promise<Exame> {
-  const res = await fetch(`${API_URL}/exames`, {
+  const res = await fetch("/exames", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
