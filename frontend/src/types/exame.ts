@@ -44,6 +44,8 @@ export type RegistroState = {
   observacoes: string;
 };
 
+export type Secao = "contador" | "tabela" | "estatistica";
+
 export type Aba =
   | "registro"
   | "contador"

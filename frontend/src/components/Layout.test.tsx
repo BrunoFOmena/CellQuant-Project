@@ -7,12 +7,16 @@ function menu() {
   return within(screen.getByRole("navigation", { name: "Seções" }));
 }
 
+function fluxo() {
+  return within(screen.getByRole("navigation", { name: "Fluxo do exame" }));
+}
+
 describe("layout monopage", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
   });
 
-  it("mostra a secao ativa e troca pelo menu lateral", async () => {
+  it("menu lateral tem 3 modulos e o contador navega no topo", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(() => Promise.reject(new Error("offline")))
@@ -23,33 +27,37 @@ describe("layout monopage", () => {
     expect(
       screen.getByRole("heading", { level: 1, name: "Registro do exame" })
     ).toBeInTheDocument();
-    expect(menu().getByRole("button", { name: "Registro" })).toHaveAttribute(
+    expect(menu().getByRole("button", { name: "Acesso ao contador" })).toHaveAttribute(
       "aria-current",
       "page"
     );
-    expect(
-      screen.getByRole("navigation", { name: "Fluxo do exame" })
-    ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "1. Registro" })).toHaveAttribute(
+    expect(fluxo().getByRole("button", { name: "Registro" })).toHaveAttribute(
       "aria-current",
       "step"
     );
 
-    await user.click(menu().getByRole("button", { name: "Consulta" }));
+    await user.click(menu().getByRole("button", { name: "Acesso à tabela" }));
     expect(
       screen.getByRole("heading", { level: 1, name: "Consulta de exames" })
     ).toBeInTheDocument();
-    expect(menu().getByRole("button", { name: "Consulta" })).toHaveAttribute(
-      "aria-current",
-      "page"
-    );
+    expect(screen.queryByRole("navigation", { name: "Fluxo do exame" })).toBeNull();
 
-    await user.click(menu().getByRole("button", { name: "Metodologia" }));
+    await user.click(menu().getByRole("button", { name: "Acesso ao contador" }));
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Registro do exame" })
+    ).toBeInTheDocument();
+
+    await user.click(fluxo().getByRole("button", { name: "Metodologia" }));
     expect(
       screen.getByRole("heading", { level: 1, name: "Metodologia" })
     ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: "Passos da contagem em câmara" })
+    ).toBeInTheDocument();
+
+    await user.click(menu().getByRole("button", { name: "Estatística dos dados" }));
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Estatística dos dados" })
     ).toBeInTheDocument();
     expect(screen.queryByRole("navigation", { name: "Fluxo do exame" })).toBeNull();
   });

@@ -5,10 +5,10 @@ import { AppProvider, useApp } from "../context/AppContext";
 import { Consulta } from "./Consulta";
 
 function Harness() {
-  const { setAba } = useApp();
+  const { setSecao } = useApp();
   useEffect(() => {
-    setAba("consulta");
-  }, [setAba]);
+    setSecao("tabela");
+  }, [setSecao]);
   return <Consulta />;
 }
 

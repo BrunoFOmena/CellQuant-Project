@@ -110,8 +110,30 @@ body,
   border-left: 3px solid transparent;
 }
 
-.menu-item svg {
-  flex-shrink: 0;
+.menu-item-label {
+  white-space: normal;
+  line-height: 1.25;
+}
+
+.estats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.estat-card span {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+  font-weight: 700;
+}
+
+.estat-card strong {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .menu-item:hover {

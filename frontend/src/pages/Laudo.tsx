@@ -12,6 +12,7 @@ export function Laudo() {
     registroCompleto,
     limparTudo,
     setAba,
+    setSecao,
   } = useApp();
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
@@ -84,10 +85,10 @@ export function Laudo() {
         observacoes: registro.observacoes.trim() || null,
       });
       limparTudo();
-      setAba("consulta");
+      setSecao("tabela");
     } catch {
       setErro(
-        "Não foi possível salvar. Verifique se o backend e o Postgres estão rodando."
+        "Não foi possível salvar. Verifique se o backend está rodando."
       );
     } finally {
       setSalvando(false);
