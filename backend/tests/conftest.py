@@ -1,5 +1,4 @@
 import json
-import socket
 from datetime import date
 from pathlib import Path
 
@@ -7,24 +6,15 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
-from app.database import get_db
+from app.database import Base, get_db
 from app.main import app
+from app.models import Exame  # noqa: F401
 
-TEST_DB_URL = "postgresql+psycopg2://lcr:lcr123@127.0.0.1:5433/contador_lcr_test"
-SCHEMA_SQL = Path(__file__).resolve().parents[2] / "bd" / "schema.sql"
-SEED_SQL = Path(__file__).resolve().parents[2] / "bd" / "seed.sql"
 FORMULA_CASOS = (
     Path(__file__).resolve().parents[2] / "tests" / "fixtures" / "formula_casos.json"
 )
-
-
-def postgres_teste_no_ar() -> bool:
-    try:
-        with socket.create_connection(("127.0.0.1", 5433), timeout=1):
-            return True
-    except OSError:
-        return False
 
 
 @pytest.fixture(scope="session")
@@ -32,32 +22,29 @@ def formula_casos():
     return json.loads(FORMULA_CASOS.read_text(encoding="utf-8"))
 
 
-@pytest.fixture(scope="session")
-def pg_engine():
-    if not postgres_teste_no_ar():
-        pytest.skip("Postgres de teste não está na porta 5433")
-    engine = create_engine(TEST_DB_URL)
-    ddl = SCHEMA_SQL.read_text(encoding="utf-8")
-    with engine.begin() as conn:
-        for stmt in ddl.split(";"):
-            stmt = stmt.strip()
-            if stmt:
-                conn.execute(text(stmt))
+@pytest.fixture()
+def sqlite_engine():
+    engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    Base.metadata.create_all(bind=engine)
     yield engine
     engine.dispose()
 
 
 @pytest.fixture()
-def db_session(pg_engine):
-    Session = sessionmaker(bind=pg_engine, autocommit=False, autoflush=False)
+def db_session(sqlite_engine):
+    Session = sessionmaker(bind=sqlite_engine, autocommit=False, autoflush=False)
     session = Session()
-    session.execute(text("TRUNCATE TABLE exames RESTART IDENTITY"))
+    session.execute(text("DELETE FROM exames"))
     session.commit()
     try:
         yield session
     finally:
         session.rollback()
-        session.execute(text("TRUNCATE TABLE exames RESTART IDENTITY"))
+        session.execute(text("DELETE FROM exames"))
         session.commit()
         session.close()
 

@@ -1,6 +1,6 @@
--- Estrutura da tabela de exames LCR
+-- Tabela exames — SQLite (criada automaticamente na primeira execução)
 CREATE TABLE IF NOT EXISTS exames (
-  id SERIAL PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   data_exame DATE NOT NULL,
   operador VARCHAR(120) NOT NULL,
   prontuario VARCHAR(80) NOT NULL,
@@ -18,9 +18,8 @@ CREATE TABLE IF NOT EXISTS exames (
   poli_pct NUMERIC(6, 2) NOT NULL DEFAULT 0,
   mono_pct NUMERIC(6, 2) NOT NULL DEFAULT 0,
   observacoes TEXT,
-  criado_em TIMESTAMP NOT NULL DEFAULT NOW()
+  criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Índice para busca por prontuário e data
 CREATE INDEX IF NOT EXISTS idx_exames_prontuario ON exames (prontuario);
 CREATE INDEX IF NOT EXISTS idx_exames_data ON exames (data_exame);

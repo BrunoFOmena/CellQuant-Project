@@ -1,20 +1,24 @@
-# Backend — Contador LCR (FastAPI)
+# Backend — Contador LCR (FastAPI + SQLite)
 
-## Subir
+## Subir (desenvolvimento)
 
 ```powershell
 cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+python -m uvicorn app.main:app --reload --port 8000
 ```
 
-API: http://localhost:8000  
-Docs: http://localhost:8000/docs
+- Saúde: http://localhost:8000/health
+- Docs: http://localhost:8000/docs
+- App (se `frontend/dist` existir): http://localhost:8000
+
+O SQLite é criado em `data/contador_lcr.db`.
 
 ## Endpoints
 
+- `GET /health`
 - `GET /exames`
 - `GET /exames/{id}`
 - `POST /exames`

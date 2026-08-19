@@ -1,31 +1,48 @@
-# Conexão com o PostgreSQL via SQLAlchemy
+# Conexão SQLite — arquivo local, sem Docker nem Postgres
 import os
-from dotenv import load_dotenv
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from pathlib import Path
 
-# Carrega variáveis do arquivo .env
+from dotenv import load_dotenv
+from sqlalchemy import create_engine, event
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
+
 load_dotenv()
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql+psycopg2://lcr:lcr123@localhost:5432/contador_lcr",
-)
+# Raiz do repositório (contador_lcr/)
+ROOT = Path(__file__).resolve().parents[2]
+DB_FILE = ROOT / "data" / "contador_lcr.db"
 
-# Engine = ponte com o banco
-engine = create_engine(DATABASE_URL)
 
-# SessionLocal = fábrica de sessões por request
+def _url_padrao() -> str:
+    DB_FILE.parent.mkdir(parents=True, exist_ok=True)
+    return "sqlite:///" + DB_FILE.resolve().as_posix()
+
+
+DATABASE_URL = os.getenv("DATABASE_URL") or _url_padrao()
+
+connect_args = {}
+if DATABASE_URL.startswith("sqlite"):
+    connect_args["check_same_thread"] = False
+
+engine = create_engine(DATABASE_URL, connect_args=connect_args)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
+@event.listens_for(engine, "connect")
+def _pragma_sqlite(dbapi_conn, _connection_record):
+    if not DATABASE_URL.startswith("sqlite"):
+        return
+    cursor = dbapi_conn.cursor()
+    cursor.execute("PRAGMA journal_mode=WAL")
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
+
+
 class Base(DeclarativeBase):
-    # Base dos models ORM
     pass
 
 
 def get_db():
-    # Entrega uma sessão e fecha ao fim do request
     db = SessionLocal()
     try:
         yield db

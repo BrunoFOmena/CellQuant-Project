@@ -1,9 +1,4 @@
-import pytest
-
 from tests.conftest import payload_exame
-
-
-pytestmark = pytest.mark.postgres
 
 
 def test_post_recalcula_e_persiste(client):

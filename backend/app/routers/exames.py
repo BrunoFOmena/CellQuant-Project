@@ -4,7 +4,7 @@ import io
 from datetime import date
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
-from sqlalchemy import or_
+from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -26,13 +26,13 @@ def listar_exames(
     query = db.query(Exame)
 
     if q:
-        like = f"%{q}%"
+        like = f"%{q.lower()}%"
         query = query.filter(
             or_(
-                Exame.prontuario.ilike(like),
-                Exame.operador.ilike(like),
-                Exame.paciente.ilike(like),
-                Exame.observacoes.ilike(like),
+                func.lower(Exame.prontuario).like(like),
+                func.lower(Exame.operador).like(like),
+                func.lower(Exame.paciente).like(like),
+                func.lower(Exame.observacoes).like(like),
             )
         )
 
