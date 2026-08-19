@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useApp } from "../context/AppContext";
 import { criarExame, listarExames } from "../api/exames";
 import { formatarNumero } from "../utils/calculo";
+import { formatarDataBr } from "../utils/data";
 
 export function Laudo() {
   const {
@@ -58,7 +59,7 @@ export function Laudo() {
 
     if (await jaExisteMesmoProntuarioData()) {
       const ok = window.confirm(
-        `Já existe exame com prontuário ${registro.prontuario.trim()} na data ${registro.data_exame.split("-").reverse().join("/")}. Salvar mesmo assim?`
+        `Já existe exame com prontuário ${registro.prontuario.trim()} na data ${formatarDataBr(registro.data_exame)}. Salvar mesmo assim?`
       );
       if (!ok) return;
     }
@@ -121,7 +122,7 @@ export function Laudo() {
           <p>
             <span>Data do exame</span>
             <strong>
-              {registro.data_exame.split("-").reverse().join("/")}
+              {formatarDataBr(registro.data_exame)}
             </strong>
           </p>
         </div>

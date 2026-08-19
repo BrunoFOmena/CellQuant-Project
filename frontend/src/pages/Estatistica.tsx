@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { listarExames } from "../api/exames";
 import type { Exame } from "../types/exame";
 import { formatarNumero } from "../utils/calculo";
+import { formatarDataBr } from "../utils/data";
 
 export function Estatistica() {
   const [exames, setExames] = useState<Exame[]>([]);
@@ -68,8 +69,8 @@ export function Estatistica() {
       poliPred,
       monoPred,
       empate,
-      dataInicial: datas[0].split("-").reverse().join("/"),
-      dataFinal: datas[datas.length - 1].split("-").reverse().join("/"),
+      dataInicial: formatarDataBr(datas[0]),
+      dataFinal: formatarDataBr(datas[datas.length - 1]),
     };
   }, [exames]);
 

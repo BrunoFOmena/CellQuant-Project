@@ -4,6 +4,8 @@ import { listarExames } from "../api/exames";
 import type { Exame } from "../types/exame";
 import { baixarCsv } from "../utils/csv";
 import { formatarNumero } from "../utils/calculo";
+import { formatarDataBr } from "../utils/data";
+import { CampoData } from "../components/CampoData";
 import { useApp } from "../context/AppContext";
 
 const PAGE_SIZE = 5;
@@ -90,18 +92,18 @@ export function Consulta() {
           </label>
           <label>
             Data inicial
-            <input
-              type="date"
+            <CampoData
               value={dataInicial}
-              onChange={(e) => setDataInicial(e.target.value)}
+              onChange={setDataInicial}
+              allowEmpty
             />
           </label>
           <label>
             Data final
-            <input
-              type="date"
+            <CampoData
               value={dataFinal}
-              onChange={(e) => setDataFinal(e.target.value)}
+              onChange={setDataFinal}
+              allowEmpty
             />
           </label>
           <div className="filtros-acoes">
@@ -169,9 +171,7 @@ export function Consulta() {
                     className={selecionado?.id === e.id ? "selecionada" : ""}
                     onClick={() => setSelecionado(e)}
                   >
-                    <td data-label="Data">
-                      {e.data_exame.split("-").reverse().join("/")}
-                    </td>
+                    <td data-label="Data">{formatarDataBr(e.data_exame)}</td>
                     <td data-label="Operador">{e.operador}</td>
                     <td data-label="Prontuário">{e.prontuario}</td>
                     <td data-label="Paciente">{e.paciente || "—"}</td>
@@ -231,7 +231,7 @@ export function Consulta() {
           <h3>Detalhe do exame</h3>
           <p>
             <strong>{selecionado.prontuario}</strong> — {selecionado.operador} —{" "}
-            {selecionado.data_exame.split("-").reverse().join("/")}
+            {formatarDataBr(selecionado.data_exame)}
           </p>
           <p>Paciente: {selecionado.paciente || "Não informado"}</p>
           <p>

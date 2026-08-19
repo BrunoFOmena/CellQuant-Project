@@ -1,4 +1,4 @@
-// Aba Contador — teclas 1–6 e botões de contagem
+// Aba Contador — teclas 1–6 e botões de contagem (tudo numa tela)
 import { useEffect } from "react";
 import { useApp } from "../context/AppContext";
 import { formatarNumero } from "../utils/calculo";
@@ -15,7 +15,6 @@ export function Contador() {
     setAba,
   } = useApp();
 
-  // Atalhos de teclado na aba Contador
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const tag = (e.target as HTMLElement)?.tagName;
@@ -46,18 +45,17 @@ export function Contador() {
   }, [incrementar, desfazer, zerarContagem]);
 
   return (
-    <section>
-      <div className="alerta-vermelho">
+    <section className="pagina-contador">
+      <div className="alerta-vermelho alerta-compacto">
         Atenção: verifique se a amostra está homogênea na câmara
       </div>
 
-      <div className="contador-grid">
-        {/* Bloco leucócitos */}
+      <div className="contador-mesa">
         <div className="card">
           <h3>Leucócitos</h3>
           <div className="campos-duplos">
             <label>
-              Quadrantes contados
+              Quadrantes
               <input
                 type="number"
                 min={1}
@@ -102,12 +100,11 @@ export function Contador() {
           </button>
         </div>
 
-        {/* Bloco hemácias */}
         <div className="card">
           <h3>Hemácias</h3>
           <div className="campos-duplos">
             <label>
-              Quadrantes contados
+              Quadrantes
               <input
                 type="number"
                 min={1}
@@ -136,10 +133,7 @@ export function Contador() {
               />
             </label>
           </div>
-          <p className="hint">
-            Padrão: 1 quadrante (retículo central). Altere se contar mais quadrantes
-            grandes.
-          </p>
+          <p className="hint">Padrão: 1 quadrante (retículo central)</p>
           <div className="total-box">
             <span>Total contado</span>
             <strong>{contagem.hema}</strong>
@@ -155,84 +149,84 @@ export function Contador() {
             Contar hemácias (tecla 2)
           </button>
         </div>
+
+        <div className="card">
+          <h3>Diferencial</h3>
+          <div className="diff-grid diff-grid-vertical">
+            <div className="diff-card">
+              <span>Polimorfonucleares</span>
+              <strong>
+                {contagem.poli} ({formatarNumero(resultados.poliPct, 0)}%)
+              </strong>
+              <button
+                type="button"
+                className="btn btn-amarelo btn-largo"
+                onClick={() => incrementar("N")}
+              >
+                Contar (tecla 3)
+              </button>
+            </div>
+            <div className="diff-card">
+              <span>Mononucleares</span>
+              <strong>
+                {contagem.mono} ({formatarNumero(resultados.monoPct, 0)}%)
+              </strong>
+              <button
+                type="button"
+                className="btn btn-amarelo btn-largo"
+                onClick={() => incrementar("M")}
+              >
+                Contar (tecla 4)
+              </button>
+            </div>
+          </div>
+          <p className="hint">
+            Total diferencial: {resultados.totalDiff} (percentuais sobre este total)
+          </p>
+        </div>
       </div>
 
-      {/* Diferencial */}
-      <div className="card">
-        <h3>Diferencial</h3>
-        <div className="diff-grid">
-          <div className="diff-card">
-            <span>Polimorfonucleares</span>
-            <strong>
-              {contagem.poli} ({formatarNumero(resultados.poliPct, 0)}%)
-            </strong>
+      <div className="contador-base">
+        <div className="card card-obs">
+          <h3>Observações</h3>
+          <textarea
+            rows={2}
+            value={registro.observacoes}
+            onChange={(e) =>
+              setRegistro((r) => ({ ...r, observacoes: e.target.value }))
+            }
+            placeholder="Ex.: aspecto, diluição especial, contagem em duplicata..."
+          />
+        </div>
+        <div className="card card-acoes-contador">
+          <p className="legenda">
+            Teclas: 1 leucócito · 2 hemácia · 3 poli · 4 mono · 5 desfazer · 6 zerar
+          </p>
+          <p className="caixa-formula caixa-formula-compacta">
+            células/µL = total ÷ (quadrantes × 0,1) × diluição
+          </p>
+          <div className="acoes acoes-contador">
             <button
               type="button"
-              className="btn btn-amarelo btn-largo"
-              onClick={() => incrementar("N")}
+              className="btn btn-vermelho"
+              onClick={() => {
+                if (window.confirm("Zerar toda a contagem atual?")) zerarContagem();
+              }}
             >
-              Contar (tecla 3)
+              Zerar contagem
             </button>
-          </div>
-          <div className="diff-card">
-            <span>Mononucleares</span>
-            <strong>
-              {contagem.mono} ({formatarNumero(resultados.monoPct, 0)}%)
-            </strong>
+            <button type="button" className="btn btn-cinza" onClick={desfazer}>
+              Desfazer última (5)
+            </button>
             <button
               type="button"
-              className="btn btn-amarelo btn-largo"
-              onClick={() => incrementar("M")}
+              className="btn btn-azul"
+              onClick={() => setAba("laudo")}
             >
-              Contar (tecla 4)
+              Ir para Laudo →
             </button>
           </div>
         </div>
-        <p className="hint">
-          Total diferencial: {resultados.totalDiff} (percentuais sobre este total)
-        </p>
-      </div>
-
-      <div className="card">
-        <h3>Observações</h3>
-        <textarea
-          rows={3}
-          value={registro.observacoes}
-          onChange={(e) =>
-            setRegistro((r) => ({ ...r, observacoes: e.target.value }))
-          }
-          placeholder="Ex.: aspecto, diluição especial, contagem em duplicata..."
-        />
-      </div>
-
-      <p className="legenda">
-        Teclas: 1 leucócito | 2 hemácia | 3 poli | 4 mono | 5 desfazer | 6 zerar
-      </p>
-
-      <div className="caixa-formula">
-        células/µL = total contado ÷ (nº quadrantes × 0,1) × diluição
-      </div>
-
-      <div className="acoes">
-        <button
-          type="button"
-          className="btn btn-vermelho"
-          onClick={() => {
-            if (window.confirm("Zerar toda a contagem atual?")) zerarContagem();
-          }}
-        >
-          Zerar contagem
-        </button>
-        <button type="button" className="btn btn-cinza" onClick={desfazer}>
-          Desfazer última (5)
-        </button>
-        <button
-          type="button"
-          className="btn btn-azul"
-          onClick={() => setAba("laudo")}
-        >
-          Ir para Laudo →
-        </button>
       </div>
     </section>
   );
