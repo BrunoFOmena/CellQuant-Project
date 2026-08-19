@@ -1,13 +1,28 @@
-# App FastAPI do Contador LCR (sem autenticação)
+# App FastAPI do Contador LCR (SQLite + UI estática, sem autenticação)
+import os
+from contextlib import asynccontextmanager
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
+from app.database import Base, engine
+from app.models import Exame  # noqa: F401 — registra a tabela no metadata
 from app.routers import exames
 
-# Cria a aplicação
-app = FastAPI(title="Contador LCR API", version="1.0.0")
+DIST = Path(__file__).resolve().parents[2] / "frontend" / "dist"
 
-# Libera o frontend local (Vite) para chamar a API
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    if not os.getenv("PYTEST_CURRENT_TEST"):
+        Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(title="Contador LCR API", version="1.0.0", lifespan=lifespan)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -16,11 +31,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Registra rotas de exames
 app.include_router(exames.router)
 
 
-@app.get("/")
+@app.get("/health")
 def health():
-    # Endpoint simples para checar se a API está no ar
     return {"ok": True, "app": "Contador LCR API"}
+
+
+if DIST.is_dir():
+    app.mount("/", StaticFiles(directory=DIST, html=True), name="ui")

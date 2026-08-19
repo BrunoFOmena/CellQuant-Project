@@ -5,8 +5,6 @@ from sqlalchemy import text
 
 from app.calculo import celulas_por_ul
 
-pytestmark = pytest.mark.postgres
-
 SEED_SQL = Path(__file__).resolve().parents[2] / "bd" / "seed.sql"
 
 

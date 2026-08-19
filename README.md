@@ -6,9 +6,9 @@ Aplicativo de contagem celular de LCR para laboratório clínico.
 
 - `frontend/` — React + TypeScript (Vite)
 - `backend/` — Python + FastAPI
-- `bd/` — PostgreSQL (Docker Compose)
+- `data/contador_lcr.db` — SQLite (criado na primeira execução)
 
-Sem autenticação. Sem Electron. Sem Google Sheets — apenas **Baixar CSV** na Consulta.
+Sem Docker. Sem PostgreSQL. Sem autenticação. Sem Electron. Sem Google Sheets — apenas **Baixar CSV** na Consulta.
 
 **Não exponha na internet.** Qualquer um na rede pode ler e gravar exames.
 
@@ -16,65 +16,58 @@ Repositório: https://github.com/BrunoFOmena/Contador_LCR
 
 ---
 
+## Laboratório (um clique)
+
+No PC precisa só de **Python 3** (já no PATH) e um navegador.
+
+1. Copie a pasta `contador_lcr` para o computador.
+2. Dê dois cliques em `iniciar.bat` (ou `.\iniciar.ps1`).
+3. Abra http://127.0.0.1:8000 se o navegador não abrir sozinho.
+
+Na primeira vez o script cria um `.venv`, instala os pacotes Python do projeto e, se o Node estiver disponível, gera a interface. Os exames ficam em `data/contador_lcr.db` — copie esse arquivo para backup.
+
+Se a pasta `frontend/dist` ainda não existir e não houver Node, rode uma vez (em qualquer PC com Node):
+
+```powershell
+cd frontend
+npm install
+npm run build
+```
+
+Depois leve a pasta inteira ao laboratório. Lá só o Python é necessário.
+
+---
+
 ## Branches
 
 | Branch | Uso |
 |---|---|
-| `main` | Produção. Só recebe merge de `hotfix` ou de `develop` estável. CI + E2E + imagens GHCR. |
+| `main` | Produção. Só recebe merge de `hotfix` ou de `develop` estável. |
 | `develop` | Integração. Novas `feature` e `fix` entram aqui. |
-| `feature` | Base para funcionalidades. Trabalhe em `feature/<nome>` a partir dela. |
-| `fix` | Base para correções não urgentes. Trabalhe em `fix/<nome>`. |
-| `hotfix` | Correção urgente em produção. Crie `hotfix/<nome>` a partir de `main` e depois mescle em `main` **e** em `develop`. |
+| `feature` | Base para funcionalidades. |
+| `fix` | Base para correções não urgentes. |
+| `hotfix` | Correção urgente em produção. |
 
-```powershell
-git checkout feature
-git checkout -b feature/minha-ideia
-
-git checkout fix
-git checkout -b fix/corrige-data
-
-git checkout main
-git checkout -b hotfix/corrige-calculo
-```
-
-Abra um Pull Request da sua branch para `develop` (`feature`/`fix`) ou para `main` (`hotfix`).
-
-A `main` não recebe push direto: o GitHub exige PR com os checks **backend** e **frontend** verdes. Imagens GHCR só publicam se pytest, Vitest, build **e** E2E passarem.
+A `main` não recebe push direto: o GitHub exige PR com os checks **backend**, **frontend** e **CI** verdes.
 
 ---
 
 ## Desenvolvimento local
 
-### 1) Banco (`bd`)
-
-Se o PostgreSQL do Windows estiver na porta **5432**, pare o serviço antes:
-
-```powershell
-Stop-Service postgresql-x64-16
-```
-
-```powershell
-cd bd
-docker compose up -d
-```
-
-Na primeira subida o volume recebe tabelas e seed mock. Subidas seguintes **não** apagam exames.
-
-> `bd/seed.sql` é **MOCK DE TESTE**.
-
-### 2) Backend
+### 1) Backend (SQLite)
 
 ```powershell
 cd backend
+python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python -m uvicorn app.main:app --reload --port 8000
 ```
 
-- API: http://localhost:8000
+- Saúde: http://localhost:8000/health
 - Docs: http://localhost:8000/docs
 
-### 3) Frontend
+### 2) Frontend
 
 ```powershell
 cd frontend
@@ -82,61 +75,33 @@ npm install
 npm run dev
 ```
 
-Abra: http://localhost:5173
+Abra: http://localhost:5173 — o Vite encaminha `/exames` para a API.
 
 ---
 
 ## Testes (máquina local)
 
 ```powershell
-cd bd
-docker compose --profile test up -d postgres_test
-
-cd ..\backend
+cd backend
 pytest
 
 cd ..\frontend
 npm test
 
-# E2E: backend na 8000 + Postgres na 5432
+# E2E: backend na 8000 (SQLite) + Vite na 5173
 cd ..\e2e
 npx playwright install chromium
 npx playwright test
 ```
 
-No GitHub Actions o CI roda pytest e Vitest em `main`, `develop`, `feature`, `fix` e `hotfix`. Playwright e publicação de imagens só em push na `main`.
-
----
-
-## Laboratório (imagens GHCR)
-
-Push na `main` com CI verde publica:
-
-- `ghcr.io/brunofomena/contador-lcr-backend`
-- `ghcr.io/brunofomena/contador-lcr-frontend`
-
-No PC do lab (Docker instalado):
-
-```powershell
-cd contador_lcr
-copy .env.prod.example .env
-# edite POSTGRES_PASSWORD no .env
-
-docker login ghcr.io
-docker compose -f docker-compose.prod.yml pull
-docker compose -f docker-compose.prod.yml up -d
-```
-
-Abra http://localhost (porta 80). O Nginx do frontend encaminha `/api` para o backend. **Não** aplica seed.
-
-Se o pacote GHCR estiver público, o `docker login` pode ser omitido.
+No GitHub Actions o CI roda pytest (SQLite em memória) e Vitest. Playwright só em push na `main`.
 
 ---
 
 ## Fluxo de uso
 
 1. **Registro** — operador e prontuário
-2. **Contador CEL.** — teclas/botões 1–6
+2. **Contador celular** — teclas/botões 1–6
 3. **Laudo** — Salvar registro (limpa a tela e vai para a Consulta)
 4. **Consulta** — filtrar, navegar na tabela, **Baixar CSV**
 
@@ -148,13 +113,13 @@ Se a API estiver fora, a Consulta mostra lista vazia (não usa mock).
 
 ```text
 contador_lcr/
-  .github/workflows/  # CI + publish GHCR
-  bd/                 # schema, seed, compose de desenvolvimento
-  backend/            # FastAPI + pytest
-  frontend/           # React + Vitest
-  e2e/                # Playwright
-  docker-compose.prod.yml
-  tests/              # fixtures da fórmula
+  iniciar.bat / iniciar.ps1
+  data/                 # SQLite (nao versionado)
+  bd/                   # schema e seed de teste
+  backend/              # FastAPI + pytest
+  frontend/             # React + Vitest
+  e2e/                  # Playwright
+  tests/                # fixtures da fórmula
   README.md
 ```
 
