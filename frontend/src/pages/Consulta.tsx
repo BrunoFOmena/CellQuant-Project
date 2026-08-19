@@ -9,7 +9,7 @@ import { useApp } from "../context/AppContext";
 const PAGE_SIZE = 5;
 
 export function Consulta() {
-  const { aba } = useApp();
+  const { secao } = useApp();
   const [exames, setExames] = useState<Exame[]>([]);
   const [q, setQ] = useState("");
   const [dataInicial, setDataInicial] = useState("");
@@ -32,16 +32,16 @@ export function Consulta() {
       setExames([]);
       setSelecionado(null);
       setErro(
-        "API indisponível. Nenhum exame listado. Verifique se o backend e o Postgres estão rodando."
+        "API indisponível. Nenhum exame listado. Verifique se o backend está rodando."
       );
       setPagina(1);
     }
   }
 
   useEffect(() => {
-    if (aba === "consulta") carregar();
+    if (secao === "tabela") carregar();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [aba]);
+  }, [secao]);
 
   // Fatia da página atual
   const totalPaginas = Math.max(1, Math.ceil(exames.length / PAGE_SIZE));
@@ -123,7 +123,7 @@ export function Consulta() {
                   setExames([]);
                   setSelecionado(null);
                   setErro(
-                    "API indisponível. Nenhum exame listado. Verifique se o backend e o Postgres estão rodando."
+                    "API indisponível. Nenhum exame listado. Verifique se o backend está rodando."
                   );
                 }
                 setPagina(1);

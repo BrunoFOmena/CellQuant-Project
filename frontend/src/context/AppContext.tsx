@@ -3,14 +3,17 @@ import {
   createContext,
   useContext,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
-import type { Aba, ContagemState, RegistroState } from "../types/exame";
+import type { Aba, ContagemState, RegistroState, Secao } from "../types/exame";
 import { celulasPorUL, percentual } from "../utils/calculo";
 import { dataCivilLocal } from "../utils/data";
 
 type AppContextValue = {
+  secao: Secao;
+  setSecao: (secao: Secao) => void;
   aba: Aba;
   setAba: (aba: Aba) => void;
   registro: RegistroState;
@@ -53,8 +56,24 @@ const contagemInicial: ContagemState = {
 const AppContext = createContext<AppContextValue | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  // Aba ativa
-  const [aba, setAba] = useState<Aba>("registro");
+  const [secao, setSecaoState] = useState<Secao>("contador");
+  const [aba, setAbaState] = useState<Aba>("registro");
+  const ultimaAbaContador = useRef<Aba>("registro");
+
+  function setAba(next: Aba) {
+    if (next !== "consulta") ultimaAbaContador.current = next;
+    setAbaState(next);
+  }
+
+  function setSecao(next: Secao) {
+    setSecaoState(next);
+    if (next === "tabela") {
+      setAbaState("consulta");
+    } else if (next === "contador") {
+      setAbaState(ultimaAbaContador.current);
+    }
+  }
+
   // Dados do formulário
   const [registro, setRegistro] = useState<RegistroState>(registroInicial);
   // Contagens ao vivo
@@ -122,6 +141,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     registro.operador.trim() !== "" && registro.prontuario.trim() !== "";
 
   const value: AppContextValue = {
+    secao,
+    setSecao,
     aba,
     setAba,
     registro,
