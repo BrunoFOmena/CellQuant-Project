@@ -16,7 +16,7 @@ describe("layout monopage", () => {
     vi.unstubAllGlobals();
   });
 
-  it("menu lateral tem 3 modulos e o contador navega no topo", async () => {
+  it("menu lateral tem 4 modulos e o contador navega no topo", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(() => Promise.reject(new Error("offline")))
@@ -50,6 +50,13 @@ describe("layout monopage", () => {
       screen.getByRole("heading", { level: 1, name: "Registro do exame" })
     ).toBeInTheDocument();
 
+    await user.click(menu().getByRole("button", { name: "Adicionar manualmente" }));
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Entrada manual" })
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("navigation", { name: "Fluxo do exame" })).toBeNull();
+
+    await user.click(menu().getByRole("button", { name: "Acesso ao contador" }));
     await user.click(fluxo().getByRole("button", { name: "Metodologia" }));
     expect(
       screen.getByRole("heading", { level: 1, name: "Metodologia" })

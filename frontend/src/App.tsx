@@ -8,6 +8,7 @@ import { Consulta } from "./pages/Consulta";
 import { Metodologia } from "./pages/Metodologia";
 import { Significado } from "./pages/Significado";
 import { Estatistica } from "./pages/Estatistica";
+import { Manual } from "./pages/Manual";
 import "./App.css";
 
 function AppRoutes() {
@@ -17,6 +18,7 @@ function AppRoutes() {
     <Layout>
       {secao === "tabela" && <Consulta />}
       {secao === "estatistica" && <Estatistica />}
+      {secao === "manual" && <Manual />}
       {secao === "contador" && aba === "registro" && <Registro />}
       {secao === "contador" && aba === "contador" && <Contador />}
       {secao === "contador" && aba === "laudo" && <Laudo />}
