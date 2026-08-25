@@ -30,6 +30,11 @@ jobs:
         run: pip install -r requirements.txt -r requirements-dev.txt
       - name: pytest
         run: pytest -q
+      - name: pytest CLI
+        working-directory: ${{ github.workspace }}
+        env:
+          PYTHONPATH: ${{ github.workspace }}/src
+        run: python -m pytest tests/test_cli.py -q
 
   frontend:
     runs-on: ubuntu-latest
