@@ -1,5 +1,6 @@
 // Gera e baixa um arquivo CSV no navegador
 import type { Exame } from "../types/exame";
+import { formatarDataBr } from "./data";
 
 export function montarConteudoCsv(exames: Exame[]): string {
   const headers = [
@@ -16,7 +17,7 @@ export function montarConteudoCsv(exames: Exame[]): string {
 
   const linhas = exames.map((e) =>
     [
-      e.data_exame,
+      formatarDataBr(e.data_exame),
       e.operador,
       e.prontuario,
       e.paciente || "",

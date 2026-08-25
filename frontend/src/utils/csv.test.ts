@@ -30,7 +30,7 @@ describe("montarConteudoCsv", () => {
     expect(linhas[0]).toBe(
       "data;operador;prontuario;paciente;leucocitos_uL;hemacias_uL;poli_pct;mono_pct;observacoes"
     );
-    expect(linhas[1]).toContain("PR-1");
+    expect(linhas[1]).toContain("16/08/2026");
     expect(linhas[1]).toContain("nota, com ponto e virgula segunda linha");
     expect(linhas[1]).not.toContain("nota;");
   });

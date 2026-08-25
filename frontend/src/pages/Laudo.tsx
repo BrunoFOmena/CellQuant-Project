@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useApp } from "../context/AppContext";
 import { criarExame, listarExames } from "../api/exames";
 import { formatarNumero } from "../utils/calculo";
+import { formatarDataBr } from "../utils/data";
 
 export function Laudo() {
   const {
@@ -12,6 +13,7 @@ export function Laudo() {
     registroCompleto,
     limparTudo,
     setAba,
+    setSecao,
   } = useApp();
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
@@ -57,7 +59,7 @@ export function Laudo() {
 
     if (await jaExisteMesmoProntuarioData()) {
       const ok = window.confirm(
-        `Já existe exame com prontuário ${registro.prontuario.trim()} na data ${registro.data_exame.split("-").reverse().join("/")}. Salvar mesmo assim?`
+        `Já existe exame com prontuário ${registro.prontuario.trim()} na data ${formatarDataBr(registro.data_exame)}. Salvar mesmo assim?`
       );
       if (!ok) return;
     }
@@ -84,10 +86,10 @@ export function Laudo() {
         observacoes: registro.observacoes.trim() || null,
       });
       limparTudo();
-      setAba("consulta");
+      setSecao("tabela");
     } catch {
       setErro(
-        "Não foi possível salvar. Verifique se o backend e o Postgres estão rodando."
+        "Não foi possível salvar. Verifique se o backend está rodando."
       );
     } finally {
       setSalvando(false);
@@ -120,7 +122,7 @@ export function Laudo() {
           <p>
             <span>Data do exame</span>
             <strong>
-              {registro.data_exame.split("-").reverse().join("/")}
+              {formatarDataBr(registro.data_exame)}
             </strong>
           </p>
         </div>
