@@ -219,8 +219,9 @@ def normalize_dir(folder: str) -> str:
 
 
 def path_contains(path_value: str, folder: str) -> bool:
+    # PATH do usuário no Windows usa ';' — não os.pathsep (':' no Linux do CI)
     target = normalize_dir(folder)
-    for part in path_value.split(os.pathsep):
+    for part in path_value.split(";"):
         if part and normalize_dir(part) == target:
             return True
     return False
