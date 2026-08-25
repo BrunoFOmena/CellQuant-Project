@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from cellquant.cli import build_parser, cmd_backup, main
-from cellquant.project import _is_root, pids_listening, repo_root
+from cellquant.project import _is_root, path_contains, pids_listening, repo_root
 
 
 def test_parser_tem_comandos_padrao():
@@ -19,6 +19,7 @@ def test_parser_tem_comandos_padrao():
         "build",
         "test",
         "backup",
+        "path",
         "dev",
     ):
         parser.parse_args([cmd])
@@ -67,3 +68,9 @@ def test_backup_copia_sqlite(tmp_path: Path):
 
 def test_backup_sem_banco(tmp_path: Path):
     assert cmd_backup(tmp_path) == 1
+
+
+def test_path_contains():
+    assert path_contains(r"C:\a;C:\proj;C:\b", r"C:\proj") is True
+    assert path_contains(r"C:\a;C:\proj\;C:\b", r"C:\proj") is True
+    assert path_contains(r"C:\a;C:\outro", r"C:\proj") is False

@@ -133,13 +133,21 @@ Sem Docker. Sem PostgreSQL. Sem autenticação. Sem Electron. No desenvolvimento
 
 ## 🖥️ CLI
 
-Na pasta do projeto, com **Python 3** no PATH:
+Na pasta do projeto, com **Python 3** no PATH.
 
-```bat
+O PowerShell **não** procura comandos na pasta atual. Na primeira vez:
+
+```powershell
+.\cellquant path
+```
+
+Isso registra `cellquant` no PATH e no perfil. **Abra um terminal novo** e então:
+
+```powershell
 cellquant start
 ```
 
-No PowerShell: `.\cellquant start` (ou `.\cellquant.cmd start`). Duplo clique em `iniciar.bat` faz a mesma coisa.
+No Prompt de Comando (CMD), `cellquant start` já funciona na pasta do projeto. Duplo clique em `iniciar.bat` também sobe o app.
 
 | Comando | Função |
 |---------|--------|
@@ -152,6 +160,7 @@ No PowerShell: `.\cellquant start` (ou `.\cellquant.cmd start`). Duplo clique em
 | `cellquant test` | pytest + Vitest |
 | `cellquant backup` | Copia `data/contador_lcr.db` para `data/backups/` |
 | `cellquant dev` | API com reload + Vite na 5173 |
+| `cellquant path` | Registra `cellquant` no PATH (PowerShell e CMD) |
 | `cellquant open` | Abre o navegador em `/` |
 
 `cellquant start --reload` é só a API com auto-reload. `cellquant start --no-browser` não abre o Chrome/Edge.

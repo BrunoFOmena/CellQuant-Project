@@ -212,3 +212,115 @@ def stop_pids(pids: list[int]) -> None:
                 os.kill(pid, 15)
             except OSError:
                 pass
+
+
+def normalize_dir(folder: str) -> str:
+    return os.path.normcase(os.path.normpath(folder.rstrip("\\/")))
+
+
+def path_contains(path_value: str, folder: str) -> bool:
+    target = normalize_dir(folder)
+    for part in path_value.split(os.pathsep):
+        if part and normalize_dir(part) == target:
+            return True
+    return False
+
+
+def _broadcast_env() -> None:
+    try:
+        import ctypes
+
+        ctypes.windll.user32.SendMessageTimeoutW(
+            0xFFFF, 0x001A, 0, "Environment", 0, 2000, None
+        )
+    except Exception:
+        pass
+
+
+def register_user_path(root: Path) -> str:
+    """Coloca a pasta do projeto no PATH do usuário (Windows). Retorna added|exists|skip."""
+    if os.name != "nt":
+        return "skip"
+    folder = str(root.resolve())
+    try:
+        import winreg
+
+        with winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER, "Environment", 0, winreg.KEY_READ
+        ) as key:
+            try:
+                current, _ = winreg.QueryValueEx(key, "Path")
+            except FileNotFoundError:
+                current = ""
+        if path_contains(current, folder):
+            os.environ["PATH"] = folder + os.pathsep + os.environ.get("PATH", "")
+            return "exists"
+        new_value = folder if not current else f"{folder};{current}"
+        with winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER, "Environment", 0, winreg.KEY_SET_VALUE
+        ) as key:
+            winreg.SetValueEx(key, "Path", 0, winreg.REG_EXPAND_SZ, new_value)
+        os.environ["PATH"] = folder + os.pathsep + os.environ.get("PATH", "")
+        _broadcast_env()
+        return "added"
+    except OSError:
+        return "skip"
+
+
+def _profile_block(root: Path) -> str:
+    cmd = str((root / "cellquant.cmd").resolve())
+    return (
+        "# >>> cellquant >>>\n"
+        f"function cellquant {{ & '{cmd}' @args }}\n"
+        "# <<< cellquant <<<\n"
+    )
+
+
+def powershell_profile_paths() -> list[Path]:
+    home = Path.home()
+    return [
+        home / "Documents" / "WindowsPowerShell" / "Microsoft.PowerShell_profile.ps1",
+        home / "Documents" / "PowerShell" / "Microsoft.PowerShell_profile.ps1",
+    ]
+
+
+def register_powershell_profile(root: Path) -> str:
+    """Define a função cellquant no perfil do PowerShell. Retorna added|exists|skip."""
+    if os.name != "nt":
+        return "skip"
+    already = True
+    cmd = str((root / "cellquant.cmd").resolve())
+    block = _profile_block(root)
+    wrote = False
+    for profile in powershell_profile_paths():
+        profile.parent.mkdir(parents=True, exist_ok=True)
+        text = profile.read_text(encoding="utf-8") if profile.is_file() else ""
+        if "function cellquant" in text and cmd.lower() in text.lower():
+            continue
+        already = False
+        start = text.find("# >>> cellquant >>>")
+        end = text.find("# <<< cellquant <<<")
+        if start != -1 and end != -1:
+            end = end + len("# <<< cellquant <<<")
+            text = text[:start].rstrip() + "\n" + block + text[end:].lstrip("\n")
+        else:
+            text = text.rstrip() + ("\n\n" if text.strip() else "") + block
+        profile.write_text(text, encoding="utf-8")
+        wrote = True
+    if wrote:
+        return "added"
+    if already:
+        return "exists"
+    return "skip"
+
+
+def ensure_cellquant_command(root: Path) -> None:
+    path_state = register_user_path(root)
+    ps_state = register_powershell_profile(root)
+    if path_state == "added" or ps_state == "added":
+        print(
+            "Comando 'cellquant' registrado neste PC.\n"
+            "Abra um terminal novo e use: cellquant start\n"
+            "Nesta sessão do PowerShell:  .\\cellquant start"
+        )
+

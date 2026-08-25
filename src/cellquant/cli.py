@@ -16,6 +16,7 @@ from cellquant.project import (
     APP_URL,
     HOST,
     PORT,
+    ensure_cellquant_command,
     ensure_data_dir,
     ensure_spa,
     ensure_venv,
@@ -66,6 +67,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("backup", help="Copia o SQLite para data/backups/")
     sub.add_parser(
+        "path",
+        help="Registra o comando cellquant no PATH e no perfil do PowerShell",
+    )
+    sub.add_parser(
         "dev",
         help="API com --reload e Vite na 5173 (dois processos)",
     )
@@ -73,6 +78,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def cmd_setup(root: Path) -> int:
+    ensure_cellquant_command(root)
     install_backend(root)
     ensure_data_dir(root)
     ensure_spa(root, force_build=True)
@@ -107,6 +113,7 @@ def _uvicorn_cmd(root: Path, *, reload: bool) -> list[str]:
 
 
 def cmd_start(root: Path, *, no_browser: bool, reload: bool) -> int:
+    ensure_cellquant_command(root)
     if port_open():
         data = health_json()
         if data:
@@ -233,6 +240,14 @@ def cmd_backup(root: Path) -> int:
     return 0
 
 
+def cmd_path(root: Path) -> int:
+    ensure_cellquant_command(root)
+    print(f"Pasta do projeto: {root}")
+    print("Novo terminal:  cellquant start")
+    print("Nesta sessão:   .\\cellquant start")
+    return 0
+
+
 def cmd_dev(root: Path) -> int:
     if not npm_cmd():
         print("Node/npm é necessário para o Vite. Rode só: cellquant start --reload")
@@ -299,6 +314,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_test(root, e2e=args.e2e)
     if args.cmd == "backup":
         return cmd_backup(root)
+    if args.cmd == "path":
+        return cmd_path(root)
     if args.cmd == "dev":
         return cmd_dev(root)
     parser.error(f"comando desconhecido: {args.cmd}")
