@@ -1,30 +1,145 @@
-# Contador LCR
+<p align="left">
+  <img src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white" />
+  <img src="https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white" />
+  <img src="https://img.shields.io/badge/SQLite-003B57?logo=sqlite&logoColor=white" />
+  <a href="https://github.com/BrunoFOmena/CellQuant-Project/actions/workflows/ci.yml"><img src="https://github.com/BrunoFOmena/CellQuant-Project/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI" /></a>
+</p>
 
-Aplicativo de contagem celular de LCR para laboratório clínico.
+# 🧬 CellQuant
 
-**Stack:**
+**Da câmara de Neubauer ao laudo celular de LCR.**
 
-- `frontend/` — React + TypeScript (Vite)
-- `backend/` — Python + FastAPI
-- `data/contador_lcr.db` — SQLite (criado na primeira execução)
+CellQuant é a **SPA** entre o microscópio e o registro do exame. O técnico conta células de LCR na bancada; a aplicação converte teclas e cliques em células/µL, e o FastAPI grava o laudo em SQLite — sem LIS, sem Docker, sem sair da bancada.
 
-Sem Docker. Sem PostgreSQL. Sem autenticação. Sem Electron. Sem Google Sheets — apenas **Baixar CSV** na Consulta.
-
-**Não exponha na internet.** Qualquer um na rede pode ler e gravar exames.
-
-Repositório: https://github.com/BrunoFOmena/Contador_LCR
+O laboratório já tem a câmara. O que falta é transformar a contagem ao vivo em um exame reproduzível, consultável e exportável.
 
 ---
 
-## Laboratório (um clique)
+## 📚 Hub de documentação
 
-No PC precisa só de **Python 3** (já no PATH) e um navegador.
+| Módulo | Link | Conteúdo |
+|--------|------|----------|
+| 🖥️ **SPA (React)** | [`frontend/README.md`](frontend/README.md) | Abas, Vite, Vitest e a interface de contagem |
+| ⚙️ **API** | [`backend/README.md`](backend/README.md) | FastAPI, endpoints e o `frontend/dist` |
+| 🗄️ **SQLite** | [`bd/README.md`](bd/README.md) | Schema, seed (só teste) e backup |
+| 🧮 **Fórmula** | [`#a-fórmula`](#-a-fórmula) | Volume da Neubauer, leucócitos, hemácias, diferencial |
+| ⌨️ **Contagem** | [`#o-que-o-cellquant-faz`](#-o-que-o-cellquant-faz) | Teclas 1–6, céls/µL ao vivo, laudo, CSV |
+| 🗺️ **Status** | [`#status`](#-status) | O que já roda, o MVP e o que fica de fora |
+| 🌿 **GitHub Flow** | [`#github-flow`](#-github-flow) | `main` + branches curtas + PR |
+| 🖥️ **Laboratório** | [`#laboratório-um-clique`](#-laboratório-um-clique) | `iniciar.bat` — Python + navegador |
+| 🚫 **Escopo** | [`#fora-de-escopo`](#-fora-de-escopo) | O que o CellQuant não faz |
 
-1. Copie a pasta `contador_lcr` para o computador.
+---
+
+## ⚠️ O problema
+
+A citologia de LCR continua um ato de bancada: câmara de Neubauer, marcação, calculadora, depois planilha ou caderno. A fórmula é simples; os modos de falha não são — quadrante errado, diluição esquecida, diferencial que não fecha, resultado que ninguém acha na semana seguinte.
+
+O desfecho típico: o microscópio está lá, a contagem aconteceu — e o laboratório ainda não tem um registro longitudinal daquele exame.
+
+## 🔧 O que o CellQuant faz
+
+```
+Microscópio · câmara de Neubauer
+        │  teclas 1–6 · botões
+        ▼
+   CellQuant SPA (React)
+        │  céls/µL ao vivo + % do diferencial
+        ├── Registro     operador · prontuário · data
+        ├── Contador     leucócitos · hemácias · poli/mono
+        ├── Laudo        revisão → POST /exames
+        └── Consulta     filtro · detalhe · CSV
+        │
+        ▼
+   FastAPI  →  SQLite (data/contador_lcr.db)
+        │      fórmula recalculada no servidor
+        ▼
+   SPA estática servida no mesmo processo
+```
+
+| Capacidade | Entrega |
+|------------|---------|
+| **SPA** | Um shell, seis telas — sem recarregar a página; estado no `AppContext` |
+| **Contador no teclado** | `1` leucócito · `2` hemácia · `3` poli · `4` mono · `5` desfazer · `6` zerar |
+| **Fórmula canônica** | A mesma conta da Neubauer em TypeScript (prévia) e em Python (fonte da verdade) |
+| **Laudo** | Operador, prontuário, contagens, céls/µL, % poli/mono, observações |
+| **Histórico** | Filtro por prontuário / operador / data · paginação · detalhe |
+| **Exportação** | **Baixar CSV** na Consulta (sem Google Sheets) |
+| **Referência** | Metodologia (passos da câmara) e significado clínico (apoio, não diagnóstico) |
+| **Runtime do lab** | Um processo Python serve API + SPA compilada na porta 8000 |
+
+> Não substitui o LIS. Não prescreve. Não fecha diagnóstico. Conta, calcula, grava e serve o exame para quem está na bancada.
+
+## 🎯 Para quem é
+
+- Laboratórios clínicos que contam LCR em câmara de Neubauer e ainda registram o resultado à mão
+- Biomédicos e técnicos que precisam de um contador orientado ao teclado, ao lado do microscópio
+- Serviços pequenos que querem histórico local e CSV — não um sistema hospitalar
+- Equipes que exigem a mesma fórmula na interface e na API, coberta por testes
+
+O domínio profundo — e único — é a **citologia de LCR**: leucócitos, hemácias e diferencial poli/mono. Metodologia e significado clínico moram na mesma SPA, como referência, não como um segundo produto.
+
+## 🧮 A fórmula
+
+A fórmula não é rodapé. É o produto: prévia na SPA, **recalculada no POST**, nunca confiando no valor que o cliente enviou.
+
+```
+células/µL = total contado ÷ (nº quadrantes × 0,1) × diluição
+           = total × diluição × 10 ÷ nº quadrantes
+```
+
+Cada quadrante grande da Neubauer tem **0,1 µL**. Padrão: leucócitos nos **4 cantos**; hemácias em **1 quadrante central** (ambos editáveis). Os percentuais do diferencial são poli e mono sobre o próprio total.
+
+```
+Exame
+ ├── operador + prontuário + data
+ ├── leucócitos   N contados  →  céls/µL
+ ├── hemácias     N contadas  →  céls/µL
+ ├── poli / mono  N contados  →  %
+ └── observações
+```
+
+Os mesmos casos estão em [`tests/fixtures/formula_casos.json`](tests/fixtures/formula_casos.json) e rodam no pytest e no Vitest.
+
+## 🏗️ Arquitetura
+
+Uma SPA React para o fluxo de bancada; um FastAPI enxuto para persistência e para o cálculo autoritativo. Servir está separado de contar: a sessão no microscópio vive na memória; só **Salvar registro** grava em disco.
+
+```mermaid
+flowchart LR
+  BANCADA[Neubauer / teclado] --> SPA[CellQuant SPA]
+  SPA --> API[FastAPI]
+  API --> CALC[Motor da fórmula]
+  CALC --> DB[(SQLite exames)]
+  SPA --> CSV[Baixar CSV]
+  API --> UI[frontend/dist estático]
+```
+
+| Camada | Papel |
+|--------|-------|
+| SPA | Abas: Registro → Contador → Laudo → Consulta (+ Metodologia, Significado) |
+| Contador | Totais ao vivo, desfazer, quadrantes e diluição |
+| API | `GET/POST /exames`, `GET /exames/{id}`, `GET /exames/export/csv`, `/health` |
+| Fórmula | `celulas_por_ul` e `percentual` — o Python manda na gravação |
+| Persistência | Arquivo SQLite `data/contador_lcr.db` (criado na primeira execução) |
+| Serving | Uvicorn serve a API e, se houver build, a SPA em `/` |
+
+**Stack:** React 19 · TypeScript · Vite · FastAPI · SQLAlchemy · SQLite · pytest · Vitest · Playwright.
+
+Sem Docker. Sem PostgreSQL. Sem autenticação. Sem Electron. No desenvolvimento são dois processos (Vite :5173 + API :8000); no laboratório é um (`iniciar.bat` → http://127.0.0.1:8000).
+
+## 🖥️ Laboratório (um clique)
+
+No PC do laboratório precisa só de **Python 3** (já no PATH) e um navegador.
+
+1. Copie a pasta do projeto para o computador.
 2. Dê dois cliques em `iniciar.bat` (ou `.\iniciar.ps1`).
 3. Abra http://127.0.0.1:8000 se o navegador não abrir sozinho.
 
-Na primeira vez o script cria um `.venv`, instala os pacotes Python do projeto e, se o Node estiver disponível, gera a interface. Os exames ficam em `data/contador_lcr.db` — copie esse arquivo para backup.
+Na primeira vez o script cria um `.venv`, instala os pacotes Python e, se o Node estiver disponível, gera a SPA. Os exames ficam em `data/contador_lcr.db` — copie esse arquivo para backup.
 
 Se a pasta `frontend/dist` ainda não existir e não houver Node, rode uma vez (em qualquer PC com Node):
 
@@ -36,23 +151,9 @@ npm run build
 
 Depois leve a pasta inteira ao laboratório. Lá só o Python é necessário.
 
----
+**Não exponha na internet.** Qualquer um na rede pode ler e gravar exames.
 
-## Branches
-
-| Branch | Uso |
-|---|---|
-| `main` | Produção. Só recebe merge de `hotfix` ou de `develop` estável. |
-| `develop` | Integração. Novas `feature` e `fix` entram aqui. |
-| `feature` | Base para funcionalidades. |
-| `fix` | Base para correções não urgentes. |
-| `hotfix` | Correção urgente em produção. |
-
-A `main` não recebe push direto: o GitHub exige PR com os checks **backend**, **frontend** e **CI** verdes.
-
----
-
-## Desenvolvimento local
+## 💻 Desenvolvimento local
 
 ### 1) Backend (SQLite)
 
@@ -66,8 +167,9 @@ python -m uvicorn app.main:app --reload --port 8000
 
 - Saúde: http://localhost:8000/health
 - Docs: http://localhost:8000/docs
+- App (se `frontend/dist` existir): http://localhost:8000
 
-### 2) Frontend
+### 2) SPA
 
 ```powershell
 cd frontend
@@ -75,11 +177,9 @@ npm install
 npm run dev
 ```
 
-Abra: http://localhost:5173 — o Vite encaminha `/exames` para a API.
+Abra http://localhost:5173 — o Vite encaminha `/exames` para a API.
 
----
-
-## Testes (máquina local)
+### Testes
 
 ```powershell
 cd backend
@@ -88,43 +188,78 @@ pytest
 cd ..\frontend
 npm test
 
-# E2E: backend na 8000 (SQLite) + Vite na 5173
+# E2E: API na 8000 (SQLite) + Vite na 5173
 cd ..\e2e
 npx playwright install chromium
 npx playwright test
 ```
 
-No GitHub Actions o CI roda pytest (SQLite em memória) e Vitest. Playwright só em push na `main`.
+No GitHub Actions, pytest e Vitest rodam em todo pull request contra a `main` e no push da `main`. Playwright só depois do merge, no push da `main`.
 
----
+## 🗺️ Status
 
-## Fluxo de uso
+A SPA é o produto: o fluxo de bancada, da identificação ao CSV, servido localmente.
 
-1. **Registro** — operador e prontuário
-2. **Contador celular** — teclas/botões 1–6
-3. **Laudo** — Salvar registro (limpa a tela e vai para a Consulta)
-4. **Consulta** — filtrar, navegar na tabela, **Baixar CSV**
+| Agora | MVP | Próximo |
+|-------|-----|---------|
+| Registro → Contador → Laudo → Consulta, SQLite, start em um clique | O mesmo fluxo, coberto por testes unitários + E2E, exportação CSV | Auth, multi-usuário, LIS, deploy remoto — fora desta entrega |
 
-Se a API estiver fora, a Consulta mostra lista vazia (não usa mock).
+### GitHub Flow
 
----
+A `main` é a única branch permanente e está sempre entregável. Não há `develop` nem bases longas: cada mudança nasce da `main`, entra por pull request e some depois do merge.
 
-## Estrutura
-
-```text
-contador_lcr/
-  iniciar.bat / iniciar.ps1
-  data/                 # SQLite (nao versionado)
-  bd/                   # schema e seed de teste
-  backend/              # FastAPI + pytest
-  frontend/             # React + Vitest
-  e2e/                  # Playwright
-  tests/                # fixtures da fórmula
-  README.md
+```
+main ──────────────────────────────────────────►  (laboratório)
+   \                    \              \
+    feat/csv-consulta    fix/formula    docs/readme
+         \                    \              \
+          PR ──merge──► main   PR ──► main    PR ──► main
 ```
 
-## Fórmula
+| Branch | Vida | Papel |
+|--------|------|--------|
+| `main` | Permanente | Fonte da verdade. Sem push direto. |
+| `feat/…` | Temporária | Funcionalidade nova |
+| `fix/…` | Temporária | Correção (também o “hotfix”: branch curta a partir da `main`) |
+| `docs/…` | Temporária | Só documentação |
+| `chore/…` | Temporária | CI, dependências, scripts |
+| `test/…` | Temporária | Só testes |
 
-`células/µL = total contado ÷ (nº quadrantes × 0,1) × diluição`
+Uma branch = um PR = um assunto. Nome em kebab-case (`feat/filtro-operador`).
 
-Cada quadrante grande da Neubauer tem 0,1 µL. Padrão: leucócitos em 4 cantos; hemácias em 1 quadrante central (editável).
+**Ciclo**
+
+1. `git checkout main && git pull`
+2. `git checkout -b feat/…` (sempre a partir da `main`)
+3. Commitar e dar push com frequência
+4. Abrir o PR cedo (draft se ainda incompleto), base `main`
+5. Checks **backend**, **frontend** e **CI** verdes → squash merge → apagar a branch
+6. A `main` atualizada é a versão do laboratório. Tag opcional (`v1.0.1`) para marcar o pacote que vai ao PC da bancada. Playwright roda no push da `main`.
+
+**Commits:** `feat:`, `fix:`, `docs:`, `chore:`, `test:` (Conventional Commits), alinhados ao prefixo da branch.
+
+`develop`, `feature`, `fix` e `hotfix` estão **congeladas**. Trabalho novo não entra nelas. O que ainda estiver só na `develop` sobe para a `main` num PR de migração e, depois disso, essas branches saem.
+
+## 🚫 Fora de escopo
+
+- Prontuário eletrônico, LIS ou prescrição
+- Decisão clínica automatizada — a aba Significado é só apoio técnico
+- Autenticação, SaaS multi-tenant, Docker, PostgreSQL
+- Empacotamento desktop (Electron) ou Google Sheets
+- Exposição na internet pública
+
+---
+
+## 📁 Estrutura
+
+```text
+CellQuant-Project/
+  iniciar.bat / iniciar.ps1   # lab: um processo, porta 8000
+  data/                       # SQLite (não versionado)
+  bd/                         # schema e seed de teste
+  backend/                    # FastAPI + pytest
+  frontend/                   # SPA React + Vitest
+  e2e/                        # Playwright
+  tests/                      # fixtures compartilhadas da fórmula
+  README.md
+```
