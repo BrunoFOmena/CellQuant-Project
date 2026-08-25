@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="LOGO.png" alt="CellQuant" width="240" />
+</p>
+
 <p align="left">
   <img src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white" />
   <img src="https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white" />
@@ -8,9 +12,11 @@
   <a href="https://github.com/BrunoFOmena/CellQuant-Project/actions/workflows/ci.yml"><img src="https://github.com/BrunoFOmena/CellQuant-Project/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI" /></a>
 </p>
 
-# 🧬 CellQuant
+# CellQuant
 
 **Da câmara de Neubauer ao laudo celular de LCR.**
+
+**Autores:** Bruno Omena e José Marcos.
 
 CellQuant é a **SPA** entre o microscópio e o registro do exame. O técnico conta células de LCR na bancada; a aplicação converte teclas e cliques em células/µL, e o FastAPI grava o laudo em SQLite — sem LIS, sem Docker, sem sair da bancada.
 
