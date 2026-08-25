@@ -1,5 +1,6 @@
 // Aba Registro — identificação do exame
 import { useApp } from "../context/AppContext";
+import { CampoData } from "../components/CampoData";
 
 export function Registro() {
   const { registro, setRegistro, registroCompleto, setAba } = useApp();
@@ -41,11 +42,10 @@ export function Registro() {
         </label>
         <label>
           Data do exame
-          <input
-            type="date"
+          <CampoData
             value={registro.data_exame}
-            onChange={(e) =>
-              setRegistro((r) => ({ ...r, data_exame: e.target.value }))
+            onChange={(iso) =>
+              setRegistro((r) => ({ ...r, data_exame: iso }))
             }
           />
         </label>

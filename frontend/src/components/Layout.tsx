@@ -154,7 +154,7 @@ export function Layout({ children }: { children: ReactNode }) {
         />
       ) : null}
 
-      <div className="app-principal">
+      <div className={noContador && aba === "contador" ? "app-principal tela-contador" : "app-principal"}>
         <header className="topo-pagina">
           <button
             type="button"

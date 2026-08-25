@@ -66,6 +66,7 @@ def test_export_csv(client):
     assert "prontuario" in texto
     assert ";" in texto
     assert "PR-TEST-001" in texto
+    assert "16/08/2026" in texto
     assert "\n" in texto or "linha1 linha2" in texto
 
 
