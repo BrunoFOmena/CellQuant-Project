@@ -1,4 +1,4 @@
-// Shell: 3 módulos na lateral; fluxo do contador no topo
+// Shell: módulos na lateral; fluxo do contador no topo
 import { useState, type ReactNode, type SVGProps } from "react";
 import type { Aba, Secao } from "../types/exame";
 import { useApp } from "../context/AppContext";
@@ -49,6 +49,12 @@ const SECOES: {
     resumo: "Registro, contagem, laudo e material de apoio",
   },
   {
+    id: "manual",
+    label: "Adicionar manualmente",
+    titulo: "Entrada manual",
+    resumo: "Lançar exame a partir da anotação em papel",
+  },
+  {
     id: "tabela",
     label: "Acesso à tabela",
     titulo: "Consulta de exames",
@@ -82,6 +88,14 @@ function IconeSecao({ id }: { id: Secao }) {
         <circle cx="16" cy="8" r="2" />
         <circle cx="8" cy="16" r="2" />
         <circle cx="16" cy="16" r="2" />
+      </svg>
+    );
+  }
+  if (id === "manual") {
+    return (
+      <svg {...svgProps}>
+        <path d="M12 20h9" />
+        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
       </svg>
     );
   }
