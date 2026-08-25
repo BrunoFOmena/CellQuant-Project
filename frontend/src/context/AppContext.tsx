@@ -70,7 +70,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (next === "tabela") {
       setAbaState("consulta");
     } else if (next === "contador") {
-      setAbaState(ultimaAbaContador.current);
+      const volta =
+        ultimaAbaContador.current === "consulta"
+          ? "registro"
+          : ultimaAbaContador.current;
+      setAbaState(volta);
     }
   }
 
@@ -111,8 +115,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setContagem(contagemInicial);
   }
 
-  // Limpa registro + contagem da tela (a aba fica a cargo de quem chama)
+  // Limpa registro + contagem e prepara um exame novo ao voltar ao contador
   function limparTudo() {
+    ultimaAbaContador.current = "registro";
     setRegistro({ ...registroInicial, data_exame: dataCivilLocal() });
     setContagem(contagemInicial);
   }
