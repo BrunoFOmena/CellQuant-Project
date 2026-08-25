@@ -27,6 +27,9 @@ describe("layout monopage", () => {
     expect(
       screen.getByRole("heading", { level: 1, name: "Registro do exame" })
     ).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "CellQuant" })).toBeInTheDocument();
+    expect(screen.getByText("Bruno Omena")).toBeInTheDocument();
+    expect(screen.getByText("José Marcos")).toBeInTheDocument();
     expect(menu().getByRole("button", { name: "Acesso ao contador" })).toHaveAttribute(
       "aria-current",
       "page"

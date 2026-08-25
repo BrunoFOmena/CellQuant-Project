@@ -56,25 +56,27 @@ body,
 }
 
 .menu-marca {
-  padding: 0.15rem 0.7rem 0.85rem;
+  padding: 0.15rem 0.45rem 0.85rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.menu-marca strong {
+.menu-logo {
   display: block;
-  font-size: 1.05rem;
-  letter-spacing: 0.02em;
+  width: 100%;
+  height: auto;
+  max-width: 180px;
+  margin: 0 auto;
+  border-radius: 12px;
+  background: #000;
 }
 
-.marca-curta {
-  display: none;
-}
-
-.menu-marca span {
-  display: block;
-  margin-top: 0.25rem;
-  font-size: 0.78rem;
-  opacity: 0.85;
+.menu-autoria {
+  margin: auto 0.5rem 0;
+  padding-top: 1rem;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  opacity: 0.8;
+  text-align: center;
 }
 
 .menu-lateral nav {
@@ -741,16 +743,14 @@ tr.selecionada {
     text-align: center;
   }
 
-  .marca-completa,
-  .menu-marca span,
+  .menu-logo {
+    max-width: 44px;
+  }
+
+  .menu-autoria,
   .menu-grupo,
   .menu-item-label {
     display: none;
-  }
-
-  .marca-curta {
-    display: block;
-    font-size: 0.78rem;
   }
 
   .menu-item {

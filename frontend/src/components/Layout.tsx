@@ -124,9 +124,12 @@ export function Layout({ children }: { children: ReactNode }) {
     <div className={menuAberto ? "app-shell menu-aberto" : "app-shell"}>
       <aside className="menu-lateral">
         <div className="menu-marca">
-          <strong className="marca-completa">CONTADOR LCR</strong>
-          <strong className="marca-curta">LCR</strong>
-          <span>Contagem celular de LCR</span>
+          <img
+            className="menu-logo"
+            src="/logo.png"
+            alt="CellQuant"
+            width={180}
+          />
         </div>
 
         <nav aria-label="Seções">
@@ -143,6 +146,12 @@ export function Layout({ children }: { children: ReactNode }) {
             </button>
           ))}
         </nav>
+
+        <p className="menu-autoria">
+          <span>Bruno Omena</span>
+          <span aria-hidden="true"> · </span>
+          <span>José Marcos</span>
+        </p>
       </aside>
 
       {menuAberto ? (

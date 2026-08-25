@@ -21,7 +21,12 @@ async def lifespan(_app: FastAPI):
     yield
 
 
-app = FastAPI(title="Contador LCR API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(
+    title="CellQuant API",
+    version="1.0.0",
+    description="Contagem celular de LCR. Autores: Bruno Omena e José Marcos.",
+    lifespan=lifespan,
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -36,7 +41,7 @@ app.include_router(exames.router)
 
 @app.get("/health")
 def health():
-    return {"ok": True, "app": "Contador LCR API"}
+    return {"ok": True, "app": "CellQuant API"}
 
 
 if DIST.is_dir():
