@@ -29,6 +29,7 @@ test("fluxo: registro, contar, salvar e consultar", async ({ page }) => {
   await expect(page.getByRole("cell", { name: prontuario })).toBeVisible({ timeout: 15_000 });
 
   await page.getByRole("navigation", { name: "Seções" }).getByRole("button", { name: "Acesso ao contador" }).click();
+  await expect(page.getByRole("heading", { name: "Registro do exame" })).toBeVisible();
   await expect(page.getByPlaceholder("Nome do técnico / biomédico")).toHaveValue("");
   await expect(page.getByPlaceholder("Ex.: PR-100234")).toHaveValue("");
 });

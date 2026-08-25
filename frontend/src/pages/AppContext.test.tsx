@@ -8,6 +8,7 @@ function Probe() {
   return (
     <div>
       <span data-testid="aba">{a.aba}</span>
+      <span data-testid="secao">{a.secao}</span>
       <span data-testid="hema-q">{a.registro.quadrantes_hema}</span>
       <span data-testid="leuco-q">{a.registro.quadrantes_leuco}</span>
       <span data-testid="leuco">{a.contagem.leuco}</span>
@@ -32,6 +33,15 @@ function Probe() {
       </button>
       <button type="button" onClick={() => a.setAba("consulta")}>
         aba-consulta
+      </button>
+      <button type="button" onClick={() => a.setAba("laudo")}>
+        aba-laudo
+      </button>
+      <button type="button" onClick={() => a.setSecao("tabela")}>
+        secao-tabela
+      </button>
+      <button type="button" onClick={() => a.setSecao("contador")}>
+        secao-contador
       </button>
       <button
         type="button"
@@ -88,5 +98,23 @@ describe("AppContext", () => {
     expect(screen.getByTestId("op")).toHaveTextContent("");
     expect(screen.getByTestId("leuco")).toHaveTextContent("0");
     expect(screen.getByTestId("aba")).toHaveTextContent("consulta");
+  });
+
+  it("depois de limpar no laudo, voltar ao contador abre o registro", async () => {
+    const user = userEvent.setup();
+    render(
+      <AppProvider>
+        <Probe />
+      </AppProvider>
+    );
+    await user.click(screen.getByText("aba-laudo"));
+    await user.click(screen.getByText("set-op"));
+    await user.click(screen.getByText("limpar"));
+    await user.click(screen.getByText("secao-tabela"));
+    expect(screen.getByTestId("secao")).toHaveTextContent("tabela");
+    await user.click(screen.getByText("secao-contador"));
+    expect(screen.getByTestId("secao")).toHaveTextContent("contador");
+    expect(screen.getByTestId("aba")).toHaveTextContent("registro");
+    expect(screen.getByTestId("op")).toHaveTextContent("");
   });
 });
