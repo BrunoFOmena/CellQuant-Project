@@ -13,6 +13,11 @@ htmlcov/
 data/*.db
 data/*.db-wal
 data/*.db-shm
+data/backups/
+
+# CLI
+src/cellquant/__pycache__/
+tests/__pycache__/
 
 # Node
 frontend/node_modules/

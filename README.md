@@ -29,7 +29,7 @@ O laboratório já tem a câmara. O que falta é transformar a contagem ao vivo 
 | ⌨️ **Contagem** | [`#o-que-o-cellquant-faz`](#-o-que-o-cellquant-faz) | Teclas 1–6, céls/µL ao vivo, laudo, CSV |
 | 🗺️ **Status** | [`#status`](#-status) | O que já roda, o MVP e o que fica de fora |
 | 🌿 **GitHub Flow** | [`#github-flow`](#-github-flow) | `main` + branches curtas + PR |
-| 🖥️ **Laboratório** | [`#laboratório-um-clique`](#-laboratório-um-clique) | `iniciar.bat` — Python + navegador |
+| 🖥️ **Laboratório** | [`#cli`](#-cli) | `cellquant start` e os outros comandos |
 | 🚫 **Escopo** | [`#fora-de-escopo`](#-fora-de-escopo) | O que o CellQuant não faz |
 
 ---
@@ -129,70 +129,59 @@ flowchart LR
 
 **Stack:** React 19 · TypeScript · Vite · FastAPI · SQLAlchemy · SQLite · pytest · Vitest · Playwright.
 
-Sem Docker. Sem PostgreSQL. Sem autenticação. Sem Electron. No desenvolvimento são dois processos (Vite :5173 + API :8000); no laboratório é um (`iniciar.bat` → http://127.0.0.1:8000).
+Sem Docker. Sem PostgreSQL. Sem autenticação. Sem Electron. No desenvolvimento são dois processos (`cellquant dev`); no laboratório é um (`cellquant start` → http://127.0.0.1:8000).
 
-## 🖥️ Laboratório (um clique)
+## 🖥️ CLI
 
-No PC do laboratório precisa só de **Python 3** (já no PATH) e um navegador.
+Na pasta do projeto, com **Python 3** no PATH:
 
-1. Copie a pasta do projeto para o computador.
-2. Dê dois cliques em `iniciar.bat` (ou `.\iniciar.ps1`).
-3. Abra http://127.0.0.1:8000 se o navegador não abrir sozinho.
-
-Na primeira vez o script cria um `.venv`, instala os pacotes Python e, se o Node estiver disponível, gera a SPA. Os exames ficam em `data/contador_lcr.db` — copie esse arquivo para backup.
-
-Se a pasta `frontend/dist` ainda não existir e não houver Node, rode uma vez (em qualquer PC com Node):
-
-```powershell
-cd frontend
-npm install
-npm run build
+```bat
+cellquant start
 ```
 
-Depois leve a pasta inteira ao laboratório. Lá só o Python é necessário.
+No PowerShell: `.\cellquant start` (ou `.\cellquant.cmd start`). Duplo clique em `iniciar.bat` faz a mesma coisa.
+
+| Comando | Função |
+|---------|--------|
+| `cellquant start` | Sobe API + SPA em http://127.0.0.1:8000 (cria venv e o banco se precisar) |
+| `cellquant stop` | Encerra o processo na porta 8000 |
+| `cellquant status` | Diz se o app está no ar |
+| `cellquant health` | `GET /health` |
+| `cellquant setup` | Primeira vez: venv, pip, build da SPA |
+| `cellquant build` | Compila a SPA (`frontend/dist`) — precisa de Node |
+| `cellquant test` | pytest + Vitest |
+| `cellquant backup` | Copia `data/contador_lcr.db` para `data/backups/` |
+| `cellquant dev` | API com reload + Vite na 5173 |
+| `cellquant open` | Abre o navegador em `/` |
+
+`cellquant start --reload` é só a API com auto-reload. `cellquant start --no-browser` não abre o Chrome/Edge.
+
+Na primeira vez o `start` cria `backend/.venv`, instala os pacotes Python e, se o Node estiver disponível, gera a SPA. Os exames ficam em `data/contador_lcr.db` — `cellquant backup` copia esse arquivo.
+
+Se `frontend/dist` ainda não existir e o PC do laboratório não tiver Node, rode `cellquant build` uma vez em qualquer máquina com Node e leve a pasta inteira. Lá só o Python é necessário.
 
 **Não exponha na internet.** Qualquer um na rede pode ler e gravar exames.
 
 ## 💻 Desenvolvimento local
 
-### 1) Backend (SQLite)
-
 ```powershell
-cd backend
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-python -m uvicorn app.main:app --reload --port 8000
+cellquant setup
+cellquant dev
 ```
 
+- App (produção local, um processo): `cellquant start` → http://127.0.0.1:8000
+- Dev (API + Vite): `cellquant dev` → API 8000 e SPA 5173
 - Saúde: http://localhost:8000/health
 - Docs: http://localhost:8000/docs
-- App (se `frontend/dist` existir): http://localhost:8000
-
-### 2) SPA
-
-```powershell
-cd frontend
-npm install
-npm run dev
-```
-
-Abra http://localhost:5173 — o Vite encaminha `/exames` para a API.
 
 ### Testes
 
 ```powershell
-cd backend
-pytest
-
-cd ..\frontend
-npm test
-
-# E2E: API na 8000 (SQLite) + Vite na 5173
-cd ..\e2e
-npx playwright install chromium
-npx playwright test
+cellquant test
+cellquant test --e2e
 ```
+
+`--e2e` dispara o Playwright (`e2e/`); a API precisa estar na 8000 (em outro terminal: `cellquant start --no-browser --reload`). O Playwright sobe o Vite sozinho.
 
 No GitHub Actions, pytest e Vitest rodam em todo pull request contra a `main` e no push da `main`. Playwright só depois do merge, no push da `main`.
 
@@ -202,7 +191,7 @@ A SPA é o produto: o fluxo de bancada, da identificação ao CSV, servido local
 
 | Agora | MVP | Próximo |
 |-------|-----|---------|
-| Registro → Contador → Laudo → Consulta, SQLite, start em um clique | O mesmo fluxo, coberto por testes unitários + E2E, exportação CSV | Auth, multi-usuário, LIS, deploy remoto — fora desta entrega |
+| Registro → Contador → Laudo → Consulta, SQLite, `cellquant start` | O mesmo fluxo, coberto por testes unitários + E2E, exportação CSV | Auth, multi-usuário, LIS, deploy remoto — fora desta entrega |
 
 ### GitHub Flow
 
@@ -254,12 +243,14 @@ As bases antigas do Git Flow (`develop`, `feature`, `fix`, `hotfix`) foram apose
 
 ```text
 CellQuant-Project/
-  iniciar.bat / iniciar.ps1   # lab: um processo, porta 8000
+  cellquant.cmd / cellquant.ps1 / cellquant.sh
+  iniciar.bat / iniciar.ps1   # atalho para cellquant start
+  src/cellquant/              # CLI (python -m cellquant)
   data/                       # SQLite (não versionado)
   bd/                         # schema e seed de teste
   backend/                    # FastAPI + pytest
   frontend/                   # SPA React + Vitest
   e2e/                        # Playwright
-  tests/                      # fixtures compartilhadas da fórmula
+  tests/                      # fixtures da fórmula + testes do CLI
   README.md
 ```

@@ -1,6 +1,8 @@
 # Backend — Contador LCR (FastAPI + SQLite)
 
-## Subir (desenvolvimento)
+Na raiz do projeto: `cellquant start` (laboratório) ou `cellquant start --reload` / `cellquant dev` (desenvolvimento).
+
+## Subir à mão
 
 ```powershell
 cd backend
