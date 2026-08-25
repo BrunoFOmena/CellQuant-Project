@@ -238,7 +238,7 @@ Uma branch = um PR = um assunto. Nome em kebab-case (`feat/filtro-operador`).
 
 **Commits:** `feat:`, `fix:`, `docs:`, `chore:`, `test:` (Conventional Commits), alinhados ao prefixo da branch.
 
-`develop`, `feature`, `fix` e `hotfix` estão **congeladas**. Trabalho novo não entra nelas. O que ainda estiver só na `develop` sobe para a `main` num PR de migração e, depois disso, essas branches saem.
+As bases antigas do Git Flow (`develop`, `feature`, `fix`, `hotfix`) foram aposentadas. Trabalho novo só a partir da `main`.
 
 ## 🚫 Fora de escopo
 
