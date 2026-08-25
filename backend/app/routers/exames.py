@@ -72,7 +72,7 @@ def exportar_csv(
     for e in exames:
         writer.writerow(
             [
-                e.data_exame.isoformat(),
+                e.data_exame.strftime("%d/%m/%Y"),
                 e.operador,
                 e.prontuario,
                 e.paciente or "",

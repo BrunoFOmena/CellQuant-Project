@@ -1,4 +1,4 @@
-// App raiz — escolhe a página conforme a aba ativa
+// App raiz — módulo da lateral + aba de cima
 import { AppProvider, useApp } from "./context/AppContext";
 import { Layout } from "./components/Layout";
 import { Registro } from "./pages/Registro";
@@ -7,19 +7,21 @@ import { Laudo } from "./pages/Laudo";
 import { Consulta } from "./pages/Consulta";
 import { Metodologia } from "./pages/Metodologia";
 import { Significado } from "./pages/Significado";
+import { Estatistica } from "./pages/Estatistica";
 import "./App.css";
 
 function AppRoutes() {
-  const { aba } = useApp();
+  const { aba, secao } = useApp();
 
   return (
     <Layout>
-      {aba === "registro" && <Registro />}
-      {aba === "contador" && <Contador />}
-      {aba === "laudo" && <Laudo />}
-      {aba === "consulta" && <Consulta />}
-      {aba === "metodologia" && <Metodologia />}
-      {aba === "significado" && <Significado />}
+      {secao === "tabela" && <Consulta />}
+      {secao === "estatistica" && <Estatistica />}
+      {secao === "contador" && aba === "registro" && <Registro />}
+      {secao === "contador" && aba === "contador" && <Contador />}
+      {secao === "contador" && aba === "laudo" && <Laudo />}
+      {secao === "contador" && aba === "metodologia" && <Metodologia />}
+      {secao === "contador" && aba === "significado" && <Significado />}
     </Layout>
   );
 }
